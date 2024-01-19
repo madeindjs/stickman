@@ -4,7 +4,7 @@
  * @param {import("./model").Point} point2
  * @param {import("./model").Point} point3
  */
-export function drawBezierCurve(ctx, point1, point2, point3) {
+function drawBezierCurve(ctx, point1, point2, point3) {
   ctx.beginPath();
   ctx.moveTo(...point1);
   ctx.bezierCurveTo(...point1, ...point2, ...point3);
@@ -13,7 +13,6 @@ export function drawBezierCurve(ctx, point1, point2, point3) {
 }
 
 /**
- *
  * @param {import('./stickman.mjs').Stickman} stickman
  */
 export function drawStickman(stickman, canvas = document.createElement("canvas")) {
@@ -40,4 +39,13 @@ export function drawStickman(stickman, canvas = document.createElement("canvas")
   drawBezierCurve(ctx, stickman.points.pelvis, stickman.points.kneeLeft, stickman.points.feetLeft);
   // leg right
   drawBezierCurve(ctx, stickman.points.pelvis, stickman.points.kneeRight, stickman.points.feetRight);
+}
+
+/**
+ * @param {import('./stickman.mjs').Stickman} stickman
+ */
+export function animate(stickman, ms = 200, canvas = document.createElement("canvas")) {
+  drawStickman(stickman, canvas);
+  stickman.tick();
+  setTimeout(() => requestAnimationFrame(() => animate(stickman, ms, canvas)), 200);
 }
