@@ -31,21 +31,3 @@ export function buildPoint(x, y) {
 }
 
 export function* getPointsTo(from, to) {}
-
-/**
- * @param {import("./model").Point} offset
- * @param {import("./model").Point} direction
- * @param {import("./model").Point} maxOffset
- */
-export function tickOffset(offset, direction, maxOffset) {
-  for (let index = 0; index < offset.length; index++) {
-    const v = offset[index] + direction[index];
-    if (v > maxOffset[index]) {
-      direction[index] = -1;
-    } else if (v < -maxOffset[index]) {
-      direction[index] = 1;
-    } else {
-      offset[index] = v;
-    }
-  }
-}

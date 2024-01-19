@@ -17,9 +17,9 @@ function* generateIntermediatePoints(point1, point2, numberOfPoints) {
 }
 
 /**
- *
+ * @typedef {[point: import("./model").Point, count: number]} Vector
  * @param {import("./model").Point} from
- * @param  {...[point: import("./model").Point, count: number]} vectors
+ * @param  {...Vector} vectors
  */
 function* generatePath(from, ...vectors) {
   let current = from;
@@ -137,25 +137,126 @@ export function* getWavingMovement(points) {
 }
 
 /**
+ * @param {Array<Vector>} elements
+ * @param {number} count
+ * @returns {Array<Vector>}
+ */
+function repeat(elements, count) {
+  const res = [];
+  for (let i = 0; i < count; i++) {
+    res.push(...elements);
+  }
+  return res;
+}
+
+/**
  * Generate breathing movement
  * @param {import("./model").StickmanPoints} points
  * @returns {import("./model").MovementGenerator}
  */
 export function* getWalkingMovement(points) {
   yield* getMovementsFromInstruction(points, {
-    feetLeft: generatePath([0, 0], [[10, -5], 5], [[16, 0], 5], [[0, 0], 10]),
-    kneeLeft: generatePath([0, 0], [[10, -5], 5], [[15, 0], 5], [[0, 0], 10]),
-    feetRight: generatePath([0, 0], [[-16, 0], 10], [[-6, -5], 5], [[0, 0], 5]),
-    kneeRight: generatePath([0, 0], [[-15, 0], 10], [[-5, 0], 5], [[0, 0], 5]),
-    pelvis: generatePath([0, 0], [[1, 0], 7], [[-1, 0], 7], [[0, 0], 6]),
-
-    chest: generatePath([0, 0], [[1, 1], 10], [[0, 0], 10]),
-    head: generatePath([0, 0], [[1, 1], 10], [[0, 0], 10]),
-
+    feetLeft: generatePath(
+      [0, 0],
+      ...repeat(
+        [
+          [[10, -5], 5],
+          [[16, 0], 5],
+          [[0, 0], 10],
+        ],
+        5
+      )
+    ),
+    kneeLeft: generatePath(
+      [0, 0],
+      ...repeat(
+        [
+          [[10, -5], 5],
+          [[15, 0], 5],
+          [[0, 0], 10],
+        ],
+        5
+      )
+    ),
+    feetRight: generatePath(
+      [0, 0],
+      ...repeat(
+        [
+          [[-16, 0], 10],
+          [[-6, -5], 5],
+          [[0, 0], 5],
+        ],
+        5
+      )
+    ),
+    kneeRight: generatePath(
+      [0, 0],
+      ...repeat(
+        [
+          [[-15, 0], 10],
+          [[-5, 0], 5],
+          [[0, 0], 5],
+        ],
+        5
+      )
+    ),
+    pelvis: generatePath(
+      [0, 0],
+      ...repeat(
+        [
+          [[1, 0], 7],
+          [[-1, 0], 7],
+          [[0, 0], 6],
+        ],
+        5
+      )
+    ),
+    chest: generatePath(
+      [0, 0],
+      ...repeat(
+        [
+          [[1, 1], 10],
+          [[0, 0], 10],
+        ],
+        5
+      )
+    ),
+    head: generatePath(
+      [0, 0],
+      ...repeat(
+        [
+          [[1, 1], 10],
+          [[0, 0], 10],
+        ],
+        5
+      )
+    ),
     elbowLeft: generatePath([0, 0], [[-2, -2], 10], [[0, 0], 10]),
-    handLeft: generatePath([0, 0], [[10, -3], 10], [[0, 0], 10]),
+    handLeft: generatePath(
+      [0, 0],
+      [[10, -3], 10],
+      ...repeat(
+        [
+          [[13, -6], 10],
+          [[10, -3], 10],
+        ],
+        4
+      ),
+      [[0, 0], 10]
+    ),
 
-    elbowRight: generatePath([0, 0], [[-10, 2], 10], [[0, 0], 10]),
-    handRight: generatePath([0, 0], [[-10, -3], 10], [[0, 0], 10]),
+    elbowRight: generatePath([0, 0], [[-10, 2], 80], [[0, 0], 10]),
+    handRight: generatePath(
+      [0, 0],
+      [[-2, -3], 10],
+      ...repeat(
+        [
+          [[-2, -3], 10],
+          [[-5, -6], 10],
+        ],
+        4
+      ),
+      [[0, 0], 10]
+    ),
   });
 }
