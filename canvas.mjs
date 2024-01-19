@@ -47,5 +47,5 @@ export function drawStickman(stickman, canvas = document.createElement("canvas")
 export function animate(stickman, ms = 200, canvas = document.createElement("canvas")) {
   drawStickman(stickman, canvas);
   stickman.tick();
-  setTimeout(() => requestAnimationFrame(() => animate(stickman, ms, canvas)), 200);
+  setTimeout(() => requestAnimationFrame(() => animate(stickman, ms, canvas)), ms);
 }

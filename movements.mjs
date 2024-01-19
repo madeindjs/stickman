@@ -2,6 +2,30 @@ import { movePoint } from "./geometry.utils.mjs";
 
 /**
  *
+ * @param {import("./model").Point} point1
+ * @param {import("./model").Point} point2
+ * @param {number} numberOfPoints
+ * @returns {Generator<import("./model").Point>}
+ */
+function* generateIntermediatePoints(point1, point2, numberOfPoints) {
+  for (let i = 0; i <= numberOfPoints; i++) {
+    const t = i / numberOfPoints;
+    const x = lerp(point1[0], point2[0], t);
+    const y = lerp(point1[1], point2[1], t);
+    yield [x, y];
+  }
+}
+
+/**
+ * @param {number} a
+ * @param {number} b
+ * @param {number} t
+ */
+function lerp(a, b, t) {
+  return a + (b - a) * t;
+}
+
+/**
  * @param {import("./model").StickmanPoints} points
  * @param {import("./model").MovementInstructions} instructions
  * @returns {import("./model").MovementGenerator}
@@ -36,6 +60,8 @@ function* getMovementsFromInstruction(points, instructions) {
       yield current;
       i--;
     }
+
+    yield points;
   }
 }
 
@@ -100,22 +126,27 @@ export function* getWavingMovement(points) {
 export function* getWalkingMovement(points) {
   yield* getMovementsFromInstruction(points, {
     feetLeft: [
-      [0, -1],
-      [0, -2],
-      [0, -2],
+      ...Array.from(generateIntermediatePoints([0, 0], [10, -5], 10)),
+      ...Array.from(generateIntermediatePoints([10, -5], [20, -2], 10)),
     ],
-    kneeLeft: [
-      [2, 0],
-      [5, 0],
-    ],
+    kneeLeft: [...Array.from(generateIntermediatePoints([0, 0], [10, -5], 10))],
     pelvis: [
       [1, 0],
       [2, 0],
     ],
-    handLeft: [[2, 0]],
-    handRight: [[2, 0]],
+    handLeft: [
+      [2, 0],
+      [4, -2],
+    ],
+    handRight: [
+      [2, 0],
+      [4, -1],
+    ],
     elbowRight: [[-1, 0]],
-    chest: [[1, 0]],
+    chest: [
+      [1, 0],
+      [1, 1],
+    ],
     head: [[2, 0]],
   });
 }
