@@ -16,6 +16,8 @@ export type StickmanPoints = {
   feetRight: Point;
 };
 
+export type StickmanConfiguration = Record<"headRadius" | "lineWidth" | "bodyHeight" | "legHeight", number>;
+
 export type MovementGenerator = Generator<StickmanPoints>;
 
 export type MovementInstructions = Partial<Record<keyof StickmanPoints, Point[]>>;
