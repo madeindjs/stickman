@@ -1,5 +1,5 @@
 import { buildPoint, getCircleBottom, movePoint } from "./geometry.utils.mjs";
-import { getBreathingMovement, getWalkingMovement, getWavingMovement } from "./movements.mjs";
+import { getWalkingMovement } from "./movements.mjs";
 
 // npm install terminal-canvas
 
@@ -8,6 +8,9 @@ export class Stickman {
   #configuration;
   /** @type {import("./model").StickmanPoints} */
   #points;
+
+  #movement = getWalkingMovement;
+
   /** @type {import("./model").MovementGenerator} */
   #movementGenerator;
 
@@ -19,12 +22,8 @@ export class Stickman {
    */
   constructor(configuration = { bodyHeight: 20, headRadius: 10, legHeight: 20, lineWidth: 2 }) {
     this.#configuration = configuration;
-
     this.#points = buildStickmanPoints(configuration);
-
-    this.#movementGenerator = getWavingMovement(this.#points);
-    this.#movementGenerator = getBreathingMovement(this.#points);
-    this.#movementGenerator = getWalkingMovement(this.#points);
+    this.#movementGenerator = this.#movement(this.#points);
   }
 
   get points() {
@@ -35,10 +34,14 @@ export class Stickman {
     return this.#configuration;
   }
 
-  setMovement() {}
-
   tick() {
-    this.#points = this.#movementGenerator.next().value;
+    const points = this.#movementGenerator.next().value;
+    if (points) {
+      this.#points = points;
+    } else {
+      this.#points = buildStickmanPoints(this.#configuration);
+      this.#movementGenerator = this.#movement(this.#points);
+    }
   }
 
   sayHi() {}

@@ -20,4 +20,4 @@ export type StickmanConfiguration = Record<"headRadius" | "lineWidth" | "bodyHei
 
 export type MovementGenerator = Generator<StickmanPoints>;
 
-export type MovementInstructions = Partial<Record<keyof StickmanPoints, Point[]>>;
+export type MovementInstructions = Partial<Record<keyof StickmanPoints, Generator<Point>>>;

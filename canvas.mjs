@@ -20,6 +20,7 @@ export function drawStickman(stickman, canvas = document.createElement("canvas")
   if (!ctx) throw Error("Cannot get canvas context");
 
   ctx.clearRect(0, 0, 100, 100);
+  debug(canvas);
 
   ctx.lineWidth = 2;
   ctx.strokeStyle = "black";
@@ -46,6 +47,31 @@ export function drawStickman(stickman, canvas = document.createElement("canvas")
  */
 export function animate(stickman, ms = 200, canvas = document.createElement("canvas")) {
   drawStickman(stickman, canvas);
+  debug(canvas);
   stickman.tick();
   setTimeout(() => requestAnimationFrame(() => animate(stickman, ms, canvas)), ms);
+}
+
+function debug(canvas) {
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  ctx.lineWidth = 0.5;
+  ctx.strokeStyle = "grey";
+
+  const p = new Array(10).fill("").map((_, i) => i);
+
+  for (const x of p) {
+    ctx.beginPath();
+    ctx.moveTo(x * 10, 0);
+    ctx.lineTo(x * 10, 100);
+    ctx.stroke();
+    ctx.closePath();
+
+    ctx.beginPath();
+    ctx.moveTo(0, x * 10);
+    ctx.lineTo(100, x * 10);
+    ctx.stroke();
+    ctx.closePath();
+  }
 }

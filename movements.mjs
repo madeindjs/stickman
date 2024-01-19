@@ -17,12 +17,44 @@ function* generateIntermediatePoints(point1, point2, numberOfPoints) {
 }
 
 /**
+ *
+ * @param {import("./model").Point} from
+ * @param  {...[point: import("./model").Point, count: number]} vectors
+ */
+function* generatePath(from, ...vectors) {
+  let current = from;
+
+  for (const [next, count] of vectors) {
+    yield* generateIntermediatePoints(current, next, count);
+    current = next;
+  }
+}
+
+/**
  * @param {number} a
  * @param {number} b
  * @param {number} t
  */
 function lerp(a, b, t) {
   return a + (b - a) * t;
+}
+
+/**
+ * @template T
+ * @param {Array<T>} arr
+ * @returns {Generator<T>}
+ */
+function* iteratorFromArray(arr) {
+  for (const item of arr) yield item;
+}
+
+/**
+ * @template T
+ * @param  {...Generator<T>} iterators
+ * @returns {Generator<T>}
+ */
+function* combine(...iterators) {
+  for (const iter of iterators) yield* iter;
 }
 
 /**
@@ -33,35 +65,21 @@ function lerp(a, b, t) {
 function* getMovementsFromInstruction(points, instructions) {
   let current = { ...points };
 
-  const maxTick = Math.max(...Object.values(instructions).map((v) => v.length));
-
   while (true) {
-    let i = 0;
-    const parts = Object.keys(instructions);
+    let didSomething = false;
 
-    while (i < maxTick) {
-      for (const part of parts) {
-        if (instructions[part]?.[i] === undefined) continue;
-        current[part] = movePoint(points[part], instructions[part][i]);
-      }
+    for (const [key, iter] of Object.entries(instructions)) {
+      const { done, value } = iter.next();
 
-      yield current;
-      i++;
+      if (done || !value) continue;
+
+      current[key] = movePoint(points[key], value);
+      didSomething = true;
     }
 
-    i--;
+    if (!didSomething) return;
 
-    while (i >= 0) {
-      for (const part of parts) {
-        if (instructions[part]?.[i] === undefined) continue;
-        current[part] = movePoint(points[part], instructions[part][i]);
-      }
-
-      yield current;
-      i--;
-    }
-
-    yield points;
+    yield current;
   }
 }
 
@@ -86,11 +104,11 @@ export function* getBreathingMovement(points) {
   ];
 
   yield* getMovementsFromInstruction(points, {
-    head: verticalMoves,
-    handLeft: verticalMoves,
-    handRight: verticalMoves,
-    elbowLeft: horizontalMoves,
-    elbowRight: horizontalMoves,
+    head: iteratorFromArray(verticalMoves),
+    handLeft: iteratorFromArray(verticalMoves),
+    handRight: iteratorFromArray(verticalMoves),
+    elbowLeft: iteratorFromArray(horizontalMoves),
+    elbowRight: iteratorFromArray(horizontalMoves),
   });
 }
 
@@ -101,7 +119,7 @@ export function* getBreathingMovement(points) {
  */
 export function* getWavingMovement(points) {
   yield* getMovementsFromInstruction(points, {
-    handRight: [
+    handRight: iteratorFromArray([
       [1, 0],
       [2, -1],
       [3, -4],
@@ -114,7 +132,7 @@ export function* getWavingMovement(points) {
       [5, -27],
       [4, -27],
       [5, -27],
-    ],
+    ]),
   });
 }
 
@@ -125,28 +143,19 @@ export function* getWavingMovement(points) {
  */
 export function* getWalkingMovement(points) {
   yield* getMovementsFromInstruction(points, {
-    feetLeft: [
-      ...Array.from(generateIntermediatePoints([0, 0], [10, -5], 10)),
-      ...Array.from(generateIntermediatePoints([10, -5], [20, -2], 10)),
-    ],
-    kneeLeft: [...Array.from(generateIntermediatePoints([0, 0], [10, -5], 10))],
-    pelvis: [
-      [1, 0],
-      [2, 0],
-    ],
-    handLeft: [
-      [2, 0],
-      [4, -2],
-    ],
-    handRight: [
-      [2, 0],
-      [4, -1],
-    ],
-    elbowRight: [[-1, 0]],
-    chest: [
-      [1, 0],
-      [1, 1],
-    ],
-    head: [[2, 0]],
+    feetLeft: generatePath([0, 0], [[10, -5], 5], [[16, 0], 5], [[0, 0], 10]),
+    kneeLeft: generatePath([0, 0], [[10, -5], 5], [[15, 0], 5], [[0, 0], 10]),
+    feetRight: generatePath([0, 0], [[-16, 0], 10], [[-6, -5], 5], [[0, 0], 5]),
+    kneeRight: generatePath([0, 0], [[-15, 0], 10], [[-5, 0], 5], [[0, 0], 5]),
+    pelvis: generatePath([0, 0], [[1, 0], 7], [[-1, 0], 7], [[0, 0], 6]),
+
+    chest: generatePath([0, 0], [[1, 1], 10], [[0, 0], 10]),
+    head: generatePath([0, 0], [[1, 1], 10], [[0, 0], 10]),
+
+    elbowLeft: generatePath([0, 0], [[-2, -2], 10], [[0, 0], 10]),
+    handLeft: generatePath([0, 0], [[10, -3], 10], [[0, 0], 10]),
+
+    elbowRight: generatePath([0, 0], [[-10, 2], 10], [[0, 0], 10]),
+    handRight: generatePath([0, 0], [[-10, -3], 10], [[0, 0], 10]),
   });
 }
