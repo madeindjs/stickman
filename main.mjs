@@ -1,5 +1,4 @@
 import { animate as animateOnCanvas, drawStickman as drawStickmanOnCanvas } from "./canvas.mjs";
-import { Editor } from "./editor.mjs";
 import { Stickman } from "./stickman.mjs";
 import "./style.css";
 import { animate as animateOnSvg, drawStickman as drawStickmanOnSvg } from "./svg.mjs";
@@ -23,4 +22,4 @@ import { animate as animateOnSvg, drawStickman as drawStickmanOnSvg } from "./sv
   document.body.append(svg);
 }
 
-document.body.append(Editor());
+import("./editor/index.jsx").then((mod) => document.body.append(mod.buildEditorOnElement()));
