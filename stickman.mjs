@@ -40,6 +40,15 @@ export class Stickman {
     }
   }
 
+  /**
+   * Creates a duplicate instance of this stickman.
+   */
+  clone() {
+    const clone = new Stickman({ ...this.#configuration });
+    clone.points = structuredClone(this.points);
+    return clone;
+  }
+
   sayHi() {}
 }
 

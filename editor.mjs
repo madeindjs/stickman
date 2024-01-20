@@ -1,6 +1,6 @@
 import { movePoint } from "./geometry.utils.mjs";
 import { Stickman } from "./stickman.mjs";
-import { SVG_NS, drawStickman } from "./svg.mjs";
+import { SVG_NS, createSVGElement, drawStickman } from "./svg.mjs";
 
 /**
  * Allow user to move a SVG path.
@@ -38,8 +38,41 @@ function Handle(initialProps) {
   ];
 }
 
+/**
+ * Represent a image of a stickman integrated in a sequence of movements.
+ */
+function EditorSnapshot(stickman) {
+  const svg = createSVGElement();
+  svg.setAttribute("height", "100");
+  svg.setAttribute("width", "100");
+  drawStickman(stickman, svg);
+  return svg;
+}
+
+/**
+ *
+ * @param {Stickman[]} snapshots
+ * @returns
+ */
+function EditorSnapshots(snapshots) {
+  const snapshotsWrapper = document.createElement("div");
+  snapshotsWrapper.style.overflowX = "auto";
+  snapshotsWrapper.style.maxWidth = "100%";
+
+  const flex = document.createElement("div");
+
+  flex.append(...snapshots.map(EditorSnapshot));
+
+  snapshotsWrapper.append(flex);
+
+  return snapshotsWrapper;
+}
+
 export function Editor(wrapper = document.createElement("div")) {
   const stickman = new Stickman();
+
+  /** @type {Stickman[]} */
+  const snapshots = [];
 
   const svg = drawStickman(stickman);
   svg.setAttribute("height", "500");
@@ -66,7 +99,6 @@ export function Editor(wrapper = document.createElement("div")) {
   }
 
   /**
-   *
    * @param {import("./model").Point} movement
    */
   function moveActiveHandles(movement) {
@@ -87,19 +119,30 @@ export function Editor(wrapper = document.createElement("div")) {
   }
 
   document.addEventListener("keydown", (ev) => {
+    ev.preventDefault();
     switch (ev.keyCode) {
       case KEY.Left:
         return moveActiveHandles([-1, 0]);
       case KEY.Right:
         return moveActiveHandles([1, 0]);
       case KEY.Down:
-        return moveActiveHandles([0, -1]);
+        return moveActiveHandles([0, 1]);
       case KEY.Up:
         return moveActiveHandles([0, -1]);
     }
   });
 
   wrapper.append(svg);
+
+  const createSnapshotBtn = document.createElement("button");
+  createSnapshotBtn.innerHTML = "Create snapshot";
+  createSnapshotBtn.onclick = () => {
+    snapshots.push(stickman.clone());
+  };
+
+  const snapshotsWrapper = EditorSnapshots(snapshots);
+
+  wrapper.append(snapshotsWrapper, createSnapshotBtn);
 
   return wrapper;
 }

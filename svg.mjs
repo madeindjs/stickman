@@ -12,7 +12,7 @@ function drawBezierCurve(el, point1, point2, point3) {
 
 export const SVG_NS = "http://www.w3.org/2000/svg";
 
-function createSVGElement() {
+export function createSVGElement() {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("height", "100");
   svg.setAttribute("width", "100");
