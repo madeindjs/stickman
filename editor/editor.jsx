@@ -2,11 +2,13 @@
 import { For, createSignal, onCleanup, onMount } from "solid-js";
 import { movePoint } from "../geometry.utils.mjs";
 import { Stickman } from "../stickman.mjs";
+import "./editor.css";
 import EditorSvg from "./svg";
 
 export default function Editor() {
   const [stickman, setStickman] = createSignal(new Stickman());
   const [selectedPoint, setSelectedPoint] = createSignal();
+  const [snapshots, setSnapshots] = createSignal([]);
 
   const pointsNames = () => Object.entries(stickman().points);
 
@@ -54,6 +56,20 @@ export default function Editor() {
           )}
         </For>
       </EditorSvg>
+      <div class="editor__toolbar">
+        <button
+          onClick={() => {
+            setSnapshots([...snapshots(), stickman().clone()]);
+          }}
+        >
+          Add Snapshot
+        </button>
+      </div>
+      <div class="editor__snapshots">
+        <div class="editor__snapshots__wrapper">
+          <For each={snapshots()}>{(snapshot) => <EditorSvg stickman={() => snapshot} />}</For>
+        </div>
+      </div>
     </div>
   );
 }
