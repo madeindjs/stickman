@@ -7,7 +7,7 @@ export class Stickman {
   /** @type {import("./model").StickmanConfiguration} */
   #configuration;
   /** @type {import("./model").StickmanPoints} */
-  #points;
+  points;
 
   #movement = getWalkingMovement;
 
@@ -22,12 +22,8 @@ export class Stickman {
    */
   constructor(configuration = { bodyHeight: 20, headRadius: 10, legHeight: 20, lineWidth: 2 }) {
     this.#configuration = configuration;
-    this.#points = buildStickmanPoints(configuration);
-    this.#movementGenerator = this.#movement(this.#points);
-  }
-
-  get points() {
-    return this.#points;
+    this.points = buildStickmanPoints(configuration);
+    this.#movementGenerator = this.#movement(this.points);
   }
 
   get configuration() {
@@ -37,10 +33,10 @@ export class Stickman {
   tick() {
     const points = this.#movementGenerator.next().value;
     if (points) {
-      this.#points = points;
+      this.points = points;
     } else {
-      this.#points = buildStickmanPoints(this.#configuration);
-      this.#movementGenerator = this.#movement(this.#points);
+      this.points = buildStickmanPoints(this.#configuration);
+      this.#movementGenerator = this.#movement(this.points);
     }
   }
 

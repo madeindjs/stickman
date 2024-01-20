@@ -10,7 +10,7 @@ function drawBezierCurve(el, point1, point2, point3) {
   el.setAttributeNS(null, "d", path);
 }
 
-const svgNS = "http://www.w3.org/2000/svg";
+export const SVG_NS = "http://www.w3.org/2000/svg";
 
 function createSVGElement() {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -33,7 +33,7 @@ function getOrCreatePath(svg, id, lineWidth) {
   // @ts-ignore
   if (el) return el;
 
-  el = document.createElementNS(svgNS, "path");
+  el = document.createElementNS(SVG_NS, "path");
   el.setAttributeNS(null, "stroke", "black");
   el.setAttributeNS(null, "stroke-width", lineWidth);
   el.setAttributeNS(null, "fill", "transparent");
@@ -56,7 +56,7 @@ export function drawStickman(stickman, svg = undefined) {
   let head = svg.querySelector("#head");
 
   if (!head) {
-    head = document.createElementNS(svgNS, "circle");
+    head = document.createElementNS(SVG_NS, "circle");
     head.setAttributeNS(null, "stroke", "black");
     head.setAttributeNS(null, "stroke-width", lineWidth);
     head.setAttributeNS(null, "r", stickman.configuration.headRadius.toString());
@@ -82,6 +82,8 @@ export function drawStickman(stickman, svg = undefined) {
 
   const legRight = getOrCreatePath(svg, "legRight", lineWidth);
   drawBezierCurve(legRight, stickman.points.pelvis, stickman.points.kneeRight, stickman.points.feetRight);
+
+  return svg;
 }
 
 /**
