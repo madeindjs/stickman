@@ -1,25 +1,20 @@
-import { Stickman } from "../stickman.mjs";
+import type { Accessor } from "solid-js";
+import type { JSX } from "solid-js/jsx-runtime";
+import type { Point } from "../model";
+import type { Stickman } from "../stickman.mjs";
 
-/**
- * @param {import("../model").Point} point1
- * @param {import("../model").Point} point2
- * @param {import("../model").Point} point3
- */
-function drawBezierCurve(point1, point2, point3) {
+function drawBezierCurve(point1: Point, point2: Point, point3: Point) {
   return `M ${point1[0]} ${point1[1]} C ${point1[0]} ${point1[1]}, ${point2[0]} ${point2[1]}, ${point3[0]} ${point3[1]}`;
 }
 
-/**
- * @typedef Props
- * @property {import('solid-js').Accessor<Stickman>} stickman
- * @property {import('solid-js').Accessor<import('solid-js').JSX.Element | import('solid-js').JSX.Element>} [children]
- * @property {number} [height]
- * @property {number} [width]
- *
- * @param {Props} param0
- * @returns
- */
-export default function EditorSvg({ stickman, width = 100, height = 100, children }) {
+type Props = {
+  stickman: Accessor<Stickman>;
+  children?: JSX.Element;
+  height?: number;
+  width?: number;
+};
+
+export default function StickmanSVG({ stickman, width = 100, height = 100, children }: Props) {
   const points = () => stickman().points;
   const conf = () => stickman().configuration;
 
@@ -45,7 +40,7 @@ export default function EditorSvg({ stickman, width = 100, height = 100, childre
       <path d={armRight()} />
       <path d={legLeft()} />
       <path d={legRight()} />
-      {children()}
+      {children}
     </svg>
   );
 }
