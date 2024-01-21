@@ -1,8 +1,9 @@
 import { For, createEffect, createSignal, onMount } from "solid-js";
 import type { Point, StickmanPoints } from "../model";
 import { Stickman } from "../stickman.mjs";
+import EditorExport from "./editor-export";
+import EditorHandle from "./editor-handle";
 import "./editor.css";
-import Handle from "./handle";
 import useCursorPositionInSVG from "./hooks/use-cursor-position-in-svg";
 import StickmanSVG from "./stickman-svg";
 
@@ -40,7 +41,7 @@ export default function Editor() {
       <StickmanSVG ref={svg} stickman={stickman} height={500} width={500}>
         <For each={pointsNames()}>
           {([key, [x, y]]) => (
-            <Handle cx={x} cy={y} onDragged={(point) => onDragged(key, point)} cursorPosition={cursorPosition} />
+            <EditorHandle cx={x} cy={y} onDragged={(point) => onDragged(key, point)} cursorPosition={cursorPosition} />
           )}
         </For>
       </StickmanSVG>
@@ -58,6 +59,7 @@ export default function Editor() {
           <For each={snapshots()}>{(snapshot) => <StickmanSVG stickman={() => snapshot} />}</For>
         </div>
       </div>
+      <EditorExport snapshots={snapshots} />
     </div>
   );
 }

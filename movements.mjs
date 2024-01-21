@@ -1,4 +1,4 @@
-import { movePoint } from "./geometry.utils.mjs";
+import { isSamePoint, movePoint, roundPoint } from "./geometry.utils.mjs";
 
 /**
  *
@@ -37,6 +37,30 @@ function* generatePath(from, ...vectors) {
  */
 function lerp(a, b, t) {
   return a + (b - a) * t;
+}
+
+/**
+ * @param {import('./stickman.mjs').Stickman[]} snapshots
+ */
+export function generateStickmanMovementDefinitionV1(snapshots, opt = { round: 2 }) {
+  let previous = snapshots[0].points;
+  /** @type {import("./model").StickmanMovementDefinitionV1} */
+  const def = { version: 1, movements: [snapshots[0].points] };
+
+  for (const stickman of snapshots.slice(1)) {
+    const part = Object.entries(stickman.points).reduce((acc, [key, point]) => {
+      if (!isSamePoint(previous[key], point)) {
+        acc[key] = roundPoint(point);
+      }
+      return acc;
+    }, {});
+
+    previous = stickman.points;
+
+    def.movements.push(part);
+  }
+
+  return def;
 }
 
 /**

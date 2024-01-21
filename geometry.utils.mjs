@@ -30,4 +30,18 @@ export function buildPoint(x, y) {
   return [x, y];
 }
 
-export function* getPointsTo(from, to) {}
+/**
+ * @param {import("./model").Point} a
+ * @param {import("./model").Point} b
+ */
+export function isSamePoint(a, b) {
+  return a[0] === b[0] && a[1] === b[1];
+}
+
+/**
+ * @param {import("./model").Point} a
+ * @return {import("./model").Point}
+ */
+export function roundPoint(a, round = 2) {
+  return [Number(a[0].toFixed(round)), Number(a[1].toFixed(round))];
+}

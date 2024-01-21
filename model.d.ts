@@ -21,3 +21,11 @@ export type StickmanConfiguration = Record<"headRadius" | "lineWidth" | "bodyHei
 export type MovementGenerator = Generator<StickmanPoints>;
 
 export type MovementInstructions = Partial<Record<keyof StickmanPoints, Generator<Point>>>;
+
+export type StickmanMovementDefinitionV1 = {
+  version: 1;
+  /**
+   * Sequence of points for each elements. It's null if previous point is same.
+   */
+  movements: [StickmanPoints, ...Partial<StickmanPoints>[]];
+};

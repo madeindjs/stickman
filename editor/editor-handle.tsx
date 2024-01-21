@@ -8,7 +8,7 @@ type Props = {
   cursorPosition?: Accessor<Point>;
 };
 
-export default function Handle(props: Props) {
+export default function EditorHandle(props: Props) {
   let circle: SVGCircleElement;
 
   const [cx, setCx] = createSignal(props.cx);
