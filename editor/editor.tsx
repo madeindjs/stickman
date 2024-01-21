@@ -1,4 +1,4 @@
-import { For, createSignal, onCleanup, onMount } from "solid-js";
+import { Accessor, For, createSignal, onCleanup, onMount } from "solid-js";
 import { movePoint } from "../geometry.utils.mjs";
 import type { Point, StickmanPoints } from "../model";
 import { Stickman } from "../stickman.mjs";
@@ -70,18 +70,14 @@ export default function Editor() {
   );
 }
 
-/**
- * @typedef Props
- * @property {number} cx
- * @property {number} cy
- * @property {() => void} onClick
- * @property {import("solid-js").Accessor<boolean>} [active]
- *
- *
- * @param {Props} param0
- * @returns
- */
-function Handle({ cx, cy, active, onClick }) {
+type HandleProps = {
+  cx: number;
+  cy: number;
+  onClick: () => void;
+  active?: Accessor<boolean>;
+};
+
+function Handle({ cx, cy, active, onClick }: HandleProps) {
   const stroke = () => (active() ? "red" : "grey");
 
   return <circle onClick={() => onClick()} cx={cx} cy={cy} r="1" stroke-width="1" stroke={stroke()} />;
