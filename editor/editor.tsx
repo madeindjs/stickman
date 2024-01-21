@@ -1,54 +1,46 @@
-import { Accessor, For, createSignal, onCleanup, onMount } from "solid-js";
-import { movePoint } from "../geometry.utils.mjs";
+import { For, createEffect, createSignal, onMount } from "solid-js";
 import type { Point, StickmanPoints } from "../model";
 import { Stickman } from "../stickman.mjs";
 import "./editor.css";
+import Handle from "./handle";
+import useCursorPositionInSVG from "./hooks/use-cursor-position-in-svg";
 import StickmanSVG from "./stickman-svg";
 
 export default function Editor() {
   const [stickman, setStickman] = createSignal(new Stickman());
-  const [selectedPoint, setSelectedPoint] = createSignal<keyof StickmanPoints>();
   const [snapshots, setSnapshots] = createSignal<Stickman[]>([]);
+
+  let svg: SVGSVGElement;
+
+  let [cursorPosition, setCursorPosition] = createSignal<Point>([-1, -1]);
 
   const pointsNames = () => Object.entries(stickman().points) as [keyof StickmanPoints, Point][];
 
-  function moveActiveHandles(movement: Point) {
+  onMount(() => {
+    const cursor = useCursorPositionInSVG(svg);
+
+    createEffect(() => {
+      setCursorPosition(cursor());
+    });
+  });
+
+  function onDragged(key: keyof StickmanPoints, point: Point) {
     const newStickman = stickman().clone();
-    const point = movePoint(newStickman.points[selectedPoint()], movement);
 
     newStickman.points = {
       ...newStickman.points,
-      [selectedPoint()]: point,
+      [key]: point,
     };
 
     setStickman(newStickman);
   }
 
-  function onKeydown(event: KeyboardEvent) {
-    event.preventDefault();
-
-    switch (event.keyCode) {
-      case KEY.Left:
-        return moveActiveHandles([-1, 0]);
-      case KEY.Right:
-        return moveActiveHandles([1, 0]);
-      case KEY.Down:
-        return moveActiveHandles([0, 1]);
-      case KEY.Up:
-        return moveActiveHandles([0, -1]);
-    }
-  }
-
-  onMount(() => document.addEventListener("keydown", onKeydown));
-
-  onCleanup(() => document.removeEventListener("keydown", onKeydown));
-
   return (
     <div>
-      <StickmanSVG stickman={stickman} height={500} width={500}>
+      <StickmanSVG ref={svg} stickman={stickman} height={500} width={500}>
         <For each={pointsNames()}>
           {([key, [x, y]]) => (
-            <Handle cx={x} cy={y} onClick={() => setSelectedPoint(key)} active={() => selectedPoint() === key} />
+            <Handle cx={x} cy={y} onDragged={(point) => onDragged(key, point)} cursorPosition={cursorPosition} />
           )}
         </For>
       </StickmanSVG>
@@ -69,23 +61,3 @@ export default function Editor() {
     </div>
   );
 }
-
-type HandleProps = {
-  cx: number;
-  cy: number;
-  onClick: () => void;
-  active?: Accessor<boolean>;
-};
-
-function Handle({ cx, cy, active, onClick }: HandleProps) {
-  const stroke = () => (active() ? "red" : "grey");
-
-  return <circle onClick={() => onClick()} cx={cx} cy={cy} r="1" stroke-width="1" stroke={stroke()} />;
-}
-
-const KEY = Object.freeze({
-  Left: 37,
-  Up: 38,
-  Right: 39,
-  Down: 40,
-});

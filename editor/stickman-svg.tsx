@@ -12,9 +12,10 @@ type Props = {
   children?: JSX.Element;
   height?: number;
   width?: number;
+  ref?: SVGSVGElement;
 };
 
-export default function StickmanSVG({ stickman, width = 100, height = 100, children }: Props) {
+export default function StickmanSVG({ stickman, width = 100, height = 100, children, ref }: Props) {
   const points = () => stickman().points;
   const conf = () => stickman().configuration;
 
@@ -26,6 +27,7 @@ export default function StickmanSVG({ stickman, width = 100, height = 100, child
 
   return (
     <svg
+      ref={ref}
       xmlns="http://www.w3.org/2000/svg"
       height={height}
       width={width}
@@ -33,6 +35,7 @@ export default function StickmanSVG({ stickman, width = 100, height = 100, child
       stroke="black"
       stroke-width={conf().lineWidth}
       fill="transparent"
+      style="border: 1px solid black"
     >
       <circle r={conf().headRadius} cx={points().head[0]} cy={points().head[1]} fill="white" />
       <path d={body()} />
