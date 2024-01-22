@@ -1,6 +1,5 @@
-import { VIEWBOX_WIDTH } from "../constants.js";
 import type { Point, Stickman, StickmanConfiguration, StickmanMovementDefinitionV1, StickmanPoints } from "../model.js";
-import { buildPoint, generateIntermediatePoints, getCircleBottom, movePoint } from "./geometry.utils.js";
+import { buildPoint, getCircleBottom, movePoint } from "./geometry.utils.js";
 
 export function buildStickman(
   configuration: StickmanConfiguration = { bodyHeight: 20, headRadius: 10, legHeight: 20, lineWidth: 2 },
@@ -59,50 +58,50 @@ function moveAllPoint(points: StickmanPoints, offset: Point): StickmanPoints {
   );
 }
 
-// export function* generateStickmans(definition: StickmanMovementDefinitionV1): Generator<Stickman> {
-//   let current = definition.movements[0];
-//   const stickman = buildStickman(definition.configuration, current);
-//   yield stickman;
-//   let i = 1;
-//   for (const points of definition.movements.slice(1)) {
-//     current = { ...current, ...points };
-//     yield buildStickman(definition.configuration, moveAllPoint(current, [i * VIEWBOX_WIDTH, 0]));
-//     i++;
-//   }
-// }
-
 export function* generateStickmans(definition: StickmanMovementDefinitionV1): Generator<Stickman> {
   let current = definition.movements[0];
-
   const stickman = buildStickman(definition.configuration, current);
   yield stickman;
-
   let i = 1;
-
   for (const points of definition.movements.slice(1)) {
-    type GeneratorMap = Partial<Record<keyof Stickman, Generator<Point>>>;
-
-    const generators = Object.keys(points).reduce<GeneratorMap>((acc, key: keyof StickmanPoints) => {
-      acc[key] = generateIntermediatePoints(current[key], points[key], 5);
-      return acc;
-    }, {});
-
-    for (let index = 0; index < 5; index++) {
-      const newPoints: StickmanPoints = { ...current };
-
-      for (const [key, point] of Object.entries(generators)) {
-        newPoints[key] = point.next().value;
-      }
-
-      yield buildStickman(definition.configuration, moveAllPoint(newPoints, [i * VIEWBOX_WIDTH, 0]));
-
-      i++;
-    }
-
     current = { ...current, ...points };
-
-    // yield buildStickman(definition.configuration, moveAllPoint(current, [i * VIEWBOX_WIDTH, 0]));
-
-    // i++;
+    yield buildStickman(definition.configuration, current);
+    i++;
   }
 }
+
+// export function* generateStickmans(definition: StickmanMovementDefinitionV1): Generator<Stickman> {
+//   let current = definition.movements[0];
+
+//   const stickman = buildStickman(definition.configuration, current);
+//   yield stickman;
+
+//   let i = 1;
+
+//   for (const points of definition.movements.slice(1)) {
+//     type GeneratorMap = Partial<Record<keyof Stickman, Generator<Point>>>;
+
+//     const generators = Object.keys(points).reduce<GeneratorMap>((acc, key: keyof StickmanPoints) => {
+//       acc[key] = generateIntermediatePoints(current[key], points[key], 5);
+//       return acc;
+//     }, {});
+
+//     for (let index = 0; index < 5; index++) {
+//       const newPoints: StickmanPoints = { ...current };
+
+//       for (const [key, point] of Object.entries(generators)) {
+//         newPoints[key] = point.next().value;
+//       }
+
+//       yield buildStickman(definition.configuration, moveAllPoint(newPoints, [i * VIEWBOX_WIDTH, 0]));
+
+//       i++;
+//     }
+
+//     current = { ...current, ...points };
+
+//     // yield buildStickman(definition.configuration, moveAllPoint(current, [i * VIEWBOX_WIDTH, 0]));
+
+//     // i++;
+//   }
+// }

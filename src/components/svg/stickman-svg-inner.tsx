@@ -1,32 +1,30 @@
-import { Accessor } from "solid-js";
-import type { Point, Stickman } from "../../model";
+import type { Accessor, JSX } from "solid-js";
+import { useSVGStickmanPaths } from "../../hooks/use-svg-stickman-paths";
+import type { Stickman } from "../../model";
 
 type Props = {
   stickman: Accessor<Stickman>;
+  childrenBody?: JSX.Element;
+  childrenArmLeft?: JSX.Element;
+  childrenArmRight?: JSX.Element;
+  childrenLegLeft?: JSX.Element;
+  childrenLegRight?: JSX.Element;
 };
 
-export default function StickmanSVGInner({ stickman }: Props) {
-  const points = () => stickman().points;
-  const conf = () => stickman().configuration;
+export default function StickmanSVGInner(props: Props) {
+  const points = () => props.stickman().points;
+  const conf = () => props.stickman().configuration;
 
-  const body = () => drawBezierCurve(points().chest, points().body, points().pelvis);
-  const armLeft = () => drawBezierCurve(points().chest, points().elbowLeft, points().handLeft);
-  const armRight = () => drawBezierCurve(points().chest, points().elbowRight, points().handRight);
-  const legLeft = () => drawBezierCurve(points().pelvis, points().kneeLeft, points().feetLeft);
-  const legRight = () => drawBezierCurve(points().pelvis, points().kneeRight, points().feetRight);
+  const { armLeft, armRight, body, legLeft, legRight } = useSVGStickmanPaths(props.stickman);
 
   return (
     <>
       <circle r={conf().headRadius} cx={points().head[0]} cy={points().head[1]} fill="white" />
-      <path d={body()} />
-      <path d={armLeft()} />
-      <path d={armRight()} />
-      <path d={legLeft()} />
-      <path d={legRight()} />
+      <path d={body()}>{props.childrenBody}</path>
+      <path d={armLeft()}>{props.childrenArmLeft}</path>
+      <path d={armRight()}>{props.childrenArmRight}</path>
+      <path d={legLeft()}>{props.childrenLegLeft}</path>
+      <path d={legRight()}>{props.childrenLegRight}</path>
     </>
   );
-}
-
-function drawBezierCurve(point1: Point, point2: Point, point3: Point) {
-  return `M ${point1[0]} ${point1[1]} C ${point1[0]} ${point1[1]}, ${point2[0]} ${point2[1]}, ${point3[0]} ${point3[1]}`;
 }
