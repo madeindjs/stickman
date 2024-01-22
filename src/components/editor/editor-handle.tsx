@@ -1,5 +1,5 @@
 import { Accessor, createSignal, onCleanup, onMount } from "solid-js";
-import type { Point } from "../model";
+import type { Point } from "../../model";
 
 type Props = {
   cx: number;

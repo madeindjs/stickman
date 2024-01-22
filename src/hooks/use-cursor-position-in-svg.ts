@@ -1,5 +1,5 @@
 import { createSignal, onCleanup, onMount } from "solid-js";
-import type { Point } from "../../model";
+import type { Point } from "../model";
 
 /**
  * Listen and compute the cursor position in a SVG.

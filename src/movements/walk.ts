@@ -1,0 +1,73 @@
+import { StickmanMovementDefinitionV1 } from "../model";
+
+export const MOVEMENTS_DEF_WALK: StickmanMovementDefinitionV1 = {
+  version: 1,
+  configuration: { bodyHeight: 20, headRadius: 10, legHeight: 20, lineWidth: 2 },
+  movements: [
+    {
+      head: [20, 20],
+      neck: [21, 21],
+      chest: [21, 30],
+      body: [19, 40],
+      pelvis: [21, 50],
+      kneeRight: [29, 60],
+      elbowLeft: [13, 40],
+      kneeLeft: [13, 60],
+      handLeft: [11, 50],
+      elbowRight: [29, 40],
+      handRight: [31, 50],
+      feetLeft: [13, 70],
+      feetRight: [29, 70],
+    },
+    {
+      head: [22.31, 21.2],
+      neck: [22.91, 22.39],
+      kneeRight: [32.47, 58.84],
+      kneeLeft: [18.73, 62.83],
+      handLeft: [15.14, 49.88],
+      elbowRight: [26.89, 42.31],
+      handRight: [34.26, 48.09],
+    },
+    {
+      kneeLeft: [21.51, 62.03],
+      handLeft: [18.73, 47.89],
+      handRight: [36.45, 46.1],
+      feetLeft: [14.34, 66.61],
+    },
+    {
+      kneeLeft: [25.5, 62.23],
+      handLeft: [22.51, 47.69],
+      elbowRight: [24.5, 44.3],
+      handRight: [33.07, 46.29],
+      feetLeft: [17.33, 65.22],
+    },
+    {
+      elbowLeft: [14.74, 42.91],
+      kneeLeft: [29.08, 62.63],
+      handLeft: [25.5, 47.69],
+      elbowRight: [20.92, 44.3],
+      handRight: [29.48, 47.29],
+      feetLeft: [20.12, 65.42],
+      feetRight: [24.7, 69.8],
+    },
+    {
+      kneeRight: [30.48, 59.24],
+      kneeLeft: [33.47, 61.24],
+      handLeft: [28.29, 46.69],
+      handRight: [27.89, 49.08],
+      feetLeft: [22.71, 65.02],
+      feetRight: [21.91, 69.6],
+    },
+    {
+      kneeRight: [27.69, 60.84],
+      kneeLeft: [35.66, 61.04],
+      feetLeft: [28.29, 66.41],
+      feetRight: [19.52, 69.2],
+    },
+    {
+      kneeRight: [25.3, 62.03],
+      feetLeft: [32.87, 68.41],
+      feetRight: [16.14, 68.61],
+    },
+  ],
+};

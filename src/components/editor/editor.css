@@ -1,0 +1,11 @@
+.editor {
+  border: 1px dashed red;
+  padding: 1rem;
+  border-radius: 1rem;
+}
+
+.editor__panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
