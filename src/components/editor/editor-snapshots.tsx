@@ -19,6 +19,7 @@ export default function EditorSnapshots({ configuration, snapshots: snapshotSign
         <For each={snapshots().map((points) => buildStickman(configuration(), points))}>
           {(stick, i) => (
             <Snapshot
+              position={() => i() + 1}
               onClick={() => (selected() === i() ? setSelected(undefined) : setSelected(i()))}
               stickman={stick}
               selected={() => selected() === i()}
@@ -35,6 +36,7 @@ export default function EditorSnapshots({ configuration, snapshots: snapshotSign
 }
 
 function Snapshot(props: {
+  position: Accessor<number>;
   selected: Accessor<boolean>;
   stickman: Stickman;
   onClick: () => void;
@@ -47,6 +49,14 @@ function Snapshot(props: {
         "border-primary rounded": props.selected(),
       }}
     >
+      <span
+        class="badge badge-neutral absolute top-0.5 left-0.5"
+        classList={{
+          "badge-primary": props.selected(),
+        }}
+      >
+        {props.position()}
+      </span>
       <StickmanSVG
         stickman={() => props.stickman}
         onClick={props.onClick}
