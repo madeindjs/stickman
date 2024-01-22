@@ -20,28 +20,34 @@ type Props = {
  */
 export default function StickmanSVGAnimated({ definition, width = 100, height = 100, ref }: Props) {
   const stickmans = () => Array.from(generateStickmans(definition()));
-
   const paths = () => stickmans().map((s) => getStickmanPaths(s.points));
+
+  function getPathsForItem(item: keyof ReturnType<typeof getStickmanPaths>): Accessor<string[]> {
+    return () => paths().map((p) => p[item]());
+  }
 
   return (
     <StickmanSVGWrapper ref={ref} height={height} width={width} strokeWidth={1}>
       <StickmanSVGInner
         stickman={() => stickmans()[0]}
-        childrenArmLeft={<AnimatePath paths={paths().map((p) => p.armLeft)} />}
-        childrenArmRight={<AnimatePath paths={paths().map((p) => p.armRight)} />}
-        childrenBody={<AnimatePath paths={paths().map((p) => p.body)} />}
-        childrenLegLeft={<AnimatePath paths={paths().map((p) => p.legLeft)} />}
-        childrenLegRight={<AnimatePath paths={paths().map((p) => p.legRight)} />}
+        childrenArmLeft={<AnimatePath paths={getPathsForItem("armLeft")} />}
+        childrenArmRight={<AnimatePath paths={getPathsForItem("armRight")} />}
+        childrenBody={<AnimatePath paths={getPathsForItem("body")} />}
+        childrenLegLeft={<AnimatePath paths={getPathsForItem("legLeft")} />}
+        childrenLegRight={<AnimatePath paths={getPathsForItem("legRight")} />}
       />
     </StickmanSVGWrapper>
   );
 }
 
-function AnimatePath({ paths }: { paths: Accessor<string>[] }) {
-  const from = () => paths[0]?.();
-  const to = () => paths[paths.length - 1]?.();
+function AnimatePath({ paths }: { paths: Accessor<string[]> }) {
+  const from = () => paths()[0];
+  const to = () => paths()[paths().length - 1];
 
-  const values = () => paths.map((p) => p()).join(";");
+  const values = () =>
+    paths()
+      .map((p) => p)
+      .join(";");
 
   return <animate attributeName="d" from={from()} to={to()} values={values()} dur="5s" repeatCount="indefinite" />;
 }
