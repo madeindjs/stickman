@@ -11,6 +11,7 @@ type Props = {
   height?: number;
   width?: number;
   ref?: SVGSVGElement;
+  className?: string;
 };
 
 /**
@@ -18,7 +19,7 @@ type Props = {
  *
  * The idea is to create all stickmans in the same SVG and then just update the view box to display them.
  */
-export default function StickmanSVGAnimated({ definition, width = 100, height = 100, ref }: Props) {
+export default function StickmanSVGAnimated({ definition, width = 100, height = 100, ref, className }: Props) {
   const stickmans = () => Array.from(generateStickmans(definition()));
   const paths = () => stickmans().map((s) => getStickmanPaths(s.points));
 
@@ -27,7 +28,7 @@ export default function StickmanSVGAnimated({ definition, width = 100, height = 
   }
 
   return (
-    <StickmanSVGWrapper ref={ref} height={height} width={width} strokeWidth={1}>
+    <StickmanSVGWrapper ref={ref} height={height} width={width} strokeWidth={1} className={className}>
       <StickmanSVGInner
         stickman={() => stickmans()[0]}
         childrenArmLeft={<AnimatePath paths={getPathsForItem("armLeft")} />}

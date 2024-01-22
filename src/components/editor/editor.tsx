@@ -9,7 +9,6 @@ import StickmanSVG from "../svg/stickman-svg.jsx";
 import EditorExport from "./editor-export.jsx";
 import EditorHandle from "./editor-handle.jsx";
 import EditorSnapshots from "./editor-snapshots";
-import "./editor.css";
 
 export default function Editor() {
   let svg: SVGSVGElement;
@@ -45,11 +44,11 @@ export default function Editor() {
   });
 
   return (
-    <div class="editor">
-      <div class="editor__panel">
-        <div class="editor__panel__left">
-          <p>Editor</p>
-          <StickmanSVG ref={svg} stickman={stickman} height={500} width={300}>
+    <div class="border rounded">
+      <div class="grid grid-cols-2 gap-2 content-center">
+        <div class="flex flex-col items-center">
+          <p class="text-2xl">Editor</p>
+          <StickmanSVG ref={svg} stickman={stickman} height={500} width={300} className="bg-white rounded">
             <For each={pointsNames()}>
               {([key, [x, y]]) => (
                 <EditorHandle
@@ -62,14 +61,18 @@ export default function Editor() {
             </For>
           </StickmanSVG>
         </div>
-        <div class="editor__panel__right">
-          <p>Preview</p>
-          <StickmanSVGAnimated definition={movementDefinition} height={500} width={300} />
+        <div class="flex flex-col items-center">
+          <p class="text-2xl">Preview</p>
+          <StickmanSVGAnimated definition={movementDefinition} height={500} width={300} className="bg-white rounded" />
         </div>
       </div>
       <div class="editor__toolbar">
-        <button onClick={reset}>Reset</button>
-        <button onClick={addSnapshot}>Add Snapshot</button>
+        <button class="btn btn-warning btn-outline" onClick={reset}>
+          🗑️ Reset
+        </button>
+        <button class="btn btn-primary" onClick={addSnapshot}>
+          ➕ Add Snapshot
+        </button>
       </div>
       <Show when={snapshots().length > 0}>
         <EditorExport snapshots={snapshots} configuration={() => conf()} />

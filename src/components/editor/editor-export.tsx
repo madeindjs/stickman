@@ -16,12 +16,9 @@ export default function EditorExport({ snapshots, configuration }: Props) {
 
   const copy = useCopyToClipboard(value);
 
-  return <button onclick={copy}>Export (clipboard)</button>;
-
   return (
-    <details>
-      <summary>Export</summary>
-      <pre>{value()}</pre>
-    </details>
+    <button class="btn btn-primary" onclick={copy}>
+      Export configuration (clipboard)
+    </button>
   );
 }

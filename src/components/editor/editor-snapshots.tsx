@@ -3,7 +3,6 @@ import { For, Show, createSignal } from "solid-js";
 import type { Stickman, StickmanConfiguration, StickmanPoints } from "../../model";
 import { buildStickman } from "../../utils/stickman.utils";
 import StickmanSVG from "../svg/stickman-svg";
-import "./editor-snapshots.css";
 
 type Props = {
   snapshots: Signal<StickmanPoints[]>;
@@ -15,8 +14,8 @@ export default function EditorSnapshots({ configuration, snapshots: snapshotSign
   const [selected, setSelected] = createSignal<number | undefined>();
 
   return (
-    <div class="editor-snapshots">
-      <div class="editor-snapshots__wrapper">
+    <div class="flex overflow-x-auto bg-base-300">
+      <div class="flex gap-1">
         <For each={snapshots().map((points) => buildStickman(configuration(), points))}>
           {(stick, i) => (
             <Snapshot
@@ -43,16 +42,22 @@ function Snapshot(props: {
 }) {
   return (
     <div
+      class="border relative"
       classList={{
-        "editor-snapshots__snaphost": true,
-        "editor-snapshots__snaphost--selected": props.selected(),
+        "border-primary rounded": props.selected(),
       }}
     >
-      <StickmanSVG stickman={() => props.stickman} onClick={props.onClick} />
+      <StickmanSVG
+        stickman={() => props.stickman}
+        onClick={props.onClick}
+        height={200}
+        width={100}
+        className="bg-white"
+      />
       <Show when={props.selected()}>
-        <div class="editor-snapshots__snaphost__buttons">
-          <button type="button" onClick={props.onRemove}>
-            Remove
+        <div class="absolute bottom-0">
+          <button class="btn btn-sm" type="button" onClick={props.onRemove}>
+            🗑️ Remove
           </button>
         </div>
       </Show>

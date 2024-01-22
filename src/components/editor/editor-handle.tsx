@@ -50,10 +50,10 @@ export default function EditorHandle(props: Props) {
 
   return (
     <>
-      <circle cx={cx()} cy={cy()} r="1" stroke-width="1" stroke="grey" ref={circle} />
+      <circle cx={cx()} cy={cy()} r="1" stroke-width="1" class="stroke-neutral-content" ref={circle} />
       {dragging() && (
         <g>
-          <circle cx={cursorX()} cy={cursorY()} r="1" stroke-width="1" stroke="red" />
+          <circle cx={cursorX()} cy={cursorY()} r="1" stroke-width="1" class="stroke-primary" />
           <path stroke-width="0.5" stroke="grey" d={`M${cx()} ${cy()} L ${cursorX()} ${cursorY()}`} />
         </g>
       )}

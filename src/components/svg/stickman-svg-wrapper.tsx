@@ -9,11 +9,21 @@ type Props = {
   height?: number;
   width?: number;
   ref?: SVGSVGElement;
+  className?: string;
   viewBox?: Accessor<SVGViewbox>;
   onClick?: () => void;
 };
 
-export default function StickmanSVGWrapper({ strokeWidth, ref, width, height, children, viewBox, onClick }: Props) {
+export default function StickmanSVGWrapper({
+  strokeWidth,
+  ref,
+  width,
+  height,
+  children,
+  viewBox,
+  onClick,
+  className,
+}: Props) {
   return (
     <svg
       ref={ref}
@@ -25,6 +35,7 @@ export default function StickmanSVGWrapper({ strokeWidth, ref, width, height, ch
       stroke-width={strokeWidth}
       fill="transparent"
       onClick={onClick}
+      class={className}
     >
       {children}
     </svg>

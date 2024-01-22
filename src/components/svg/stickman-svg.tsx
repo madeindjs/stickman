@@ -11,6 +11,7 @@ type Props = {
   width?: number;
   ref?: SVGSVGElement;
   onClick?: () => void;
+  className?: string;
 };
 
 export default function StickmanSVG({
@@ -20,6 +21,7 @@ export default function StickmanSVG({
   children,
   ref,
   onClick,
+  className,
 }: Props) {
   return (
     <StickmanSVGWrapper
@@ -29,6 +31,7 @@ export default function StickmanSVG({
       strokeWidth={stickman().configuration.lineWidth}
       viewBox={() => [0, 0, VIEWBOX_WIDTH, VIEWBOX_HEIGHT]}
       onClick={onClick}
+      className={className}
     >
       <StickmanSVGInner stickman={stickman} />
       {children}
