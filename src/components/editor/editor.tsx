@@ -32,6 +32,13 @@ export default function Editor() {
     setStickman(buildStickman(conf(), { ...points(), [key]: point }));
   }
 
+  const addSnapshot = () => setSnapshots([...snapshots(), stickman().points]);
+
+  function reset() {
+    setSnapshots([]);
+    setStickman(buildStickman());
+  }
+
   onMount(() => {
     const cursor = useCursorPositionInSVG(svg);
     createEffect(() => setCursorPosition(cursor()));
@@ -61,13 +68,8 @@ export default function Editor() {
         </div>
       </div>
       <div class="editor__toolbar">
-        <button
-          onClick={() => {
-            setSnapshots([...snapshots(), stickman().points]);
-          }}
-        >
-          Add Snapshot
-        </button>
+        <button onClick={reset}>Reset</button>
+        <button onClick={addSnapshot}>Add Snapshot</button>
       </div>
       <Show when={snapshots().length > 0}>
         <EditorExport snapshots={snapshots} configuration={() => conf()} />
