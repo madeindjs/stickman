@@ -1,11 +1,11 @@
 import { For, Show, createEffect, createSignal, onMount } from "solid-js";
 import useCursorPositionInSVG from "../../hooks/use-cursor-position-in-svg";
+import { useSVGExporter } from "../../hooks/use-svg-exporter";
 import type { Point, StickmanPoints } from "../../model.js";
 import { generateStickmanMovementDefinitionV1 } from "../../utils/movements.utils";
 import { buildStickman } from "../../utils/stickman.utils.js";
 import StickmanSVGAnimated from "../svg/stickman-svg-animated";
 import StickmanSVG from "../svg/stickman-svg.jsx";
-import EditorExport from "./editor-export.jsx";
 import EditorHandle from "./editor-handle.jsx";
 import EditorSettings from "./editor-settings";
 import EditorSnapshots from "./editor-snapshots";
@@ -13,7 +13,8 @@ import { useSnapshots } from "./hooks/use-snapshots";
 import { useStickman } from "./hooks/use-stickman";
 
 export default function Editor() {
-  let svg: SVGSVGElement;
+  let svgEditor: SVGSVGElement;
+  let svgPreview: SVGSVGElement;
 
   const [timeBetweenFrames, setTimeBetweenFrames] = createSignal(0.2);
   const [cursorPosition, setCursorPosition] = createSignal<Point>([-1, -1]);
@@ -28,6 +29,8 @@ export default function Editor() {
     selected: [snapshotSelectedIndex, setSnapshotSelectedIndex],
     updateSelectedSnapshot,
   } = useSnapshots([stickman, setStickman]);
+
+  const exportSVG = useSVGExporter(svgPreview);
 
   const conf = () => stickman().configuration;
   const points = () => stickman().points;
@@ -51,7 +54,7 @@ export default function Editor() {
   }
 
   onMount(() => {
-    const cursor = useCursorPositionInSVG(svg);
+    const cursor = useCursorPositionInSVG(svgEditor);
     createEffect(() => setCursorPosition(cursor()));
   });
 
@@ -61,7 +64,7 @@ export default function Editor() {
         <EditorSettings onReset={reset} timeBetweenFrames={[timeBetweenFrames, setTimeBetweenFrames]} />
         <div class="flex flex-col items-center gap-2">
           <p class="text-2xl">Editor</p>
-          <StickmanSVG ref={svg} stickman={stickman} height={500} width={300} className="bg-white rounded">
+          <StickmanSVG ref={svgEditor} stickman={stickman} height={500} width={300} className="bg-white rounded">
             <For each={pointsNames()}>
               {([key, [x, y]]) => (
                 <EditorHandle
@@ -79,8 +82,16 @@ export default function Editor() {
         </div>
         <div class="flex flex-col items-center gap-2">
           <p class="text-2xl">Preview</p>
-          <StickmanSVGAnimated definition={movementDefinition} height={500} width={300} className="bg-white rounded" />
-          <EditorExport snapshots={snapshots} configuration={() => conf()} />
+          <StickmanSVGAnimated
+            definition={movementDefinition}
+            height={500}
+            width={300}
+            className="bg-white rounded"
+            ref={svgPreview}
+          />
+          <button class="btn btn-secondary" onclick={exportSVG}>
+            💾 Save image
+          </button>
         </div>
       </div>
       <Show when={snapshots().length > 0}>

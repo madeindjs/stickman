@@ -18,10 +18,11 @@ export default function EditorSettings(props: Props) {
         <SliderWithLabel label="Time between frames" value={props.timeBetweenFrames} />
       </div>
 
-      <div>
-        <button class="btn btn-warning btn-outline" onClick={props.onReset}>
+      <div class="join">
+        <button class="btn btn-warning btn-outline join-item" onClick={props.onReset}>
           🗑️ Reset
         </button>
+        <button class="btn btn-secondary join-item">💾 Save image</button>
       </div>
     </div>
   );

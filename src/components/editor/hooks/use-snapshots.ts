@@ -18,11 +18,7 @@ export function useSnapshots([stickman, setStickman]: Signal<Stickman>): {
   createEffect(
     on(
       () => snapshotSelectedIndex(),
-      (value) => {
-        console.log(value);
-        if (value === undefined) return;
-        setStickman(buildStickman(stickman().configuration, snapshots()[value]));
-      }
+      (value) => value !== undefined && setStickman(buildStickman(stickman().configuration, snapshots()[value]))
     )
   );
 
