@@ -8,9 +8,15 @@ type Props = {
   snapshots: Signal<StickmanPoints[]>;
   configuration: Accessor<StickmanConfiguration>;
   selected: Signal<number | undefined>;
+  onAddSnapshot: () => void;
 };
 
-export default function EditorSnapshots({ configuration, snapshots: snapshotSignal, selected: selectedSignal }: Props) {
+export default function EditorSnapshots({
+  configuration,
+  snapshots: snapshotSignal,
+  selected: selectedSignal,
+  onAddSnapshot,
+}: Props) {
   const [snapshots, setSnapshots] = snapshotSignal;
   const [selected, setSelected] = selectedSignal;
 
@@ -31,6 +37,11 @@ export default function EditorSnapshots({ configuration, snapshots: snapshotSign
             />
           )}
         </For>
+        <div class="border flex items-center justify-center w-28">
+          <button type="button" class="btn btn-primary btn-circle text-3xl" onClick={onAddSnapshot}>
+            +<span class="sr-only">Add snapshot</span>
+          </button>
+        </div>
       </div>
     </div>
   );

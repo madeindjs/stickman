@@ -1,4 +1,4 @@
-import { For, Show, createEffect, createSignal, onMount } from "solid-js";
+import { For, createEffect, createSignal, onMount } from "solid-js";
 import useCursorPositionInSVG from "../../hooks/use-cursor-position-in-svg";
 import { useSVGExporter } from "../../hooks/use-svg-exporter";
 import type { Point, StickmanPoints } from "../../model.js";
@@ -76,9 +76,6 @@ export default function Editor() {
               )}
             </For>
           </StickmanSVG>
-          <button class="btn btn-primary" onClick={addSnapshot}>
-            ➕ Add Snapshot
-          </button>
         </div>
         <div class="flex flex-col items-center gap-2 p-4">
           <p class="text-2xl">Preview</p>
@@ -89,18 +86,14 @@ export default function Editor() {
             className="bg-white rounded"
             ref={svgPreview}
           />
-          <button class="btn btn-secondary" onclick={exportSVG}>
-            💾 Save image
-          </button>
         </div>
       </div>
-      <Show when={snapshots().length > 0}>
-        <EditorSnapshots
-          snapshots={[snapshots, setSnapshots]}
-          configuration={() => conf()}
-          selected={[snapshotSelectedIndex, setSnapshotSelectedIndex]}
-        />
-      </Show>
+      <EditorSnapshots
+        snapshots={[snapshots, setSnapshots]}
+        configuration={() => conf()}
+        selected={[snapshotSelectedIndex, setSnapshotSelectedIndex]}
+        onAddSnapshot={addSnapshot}
+      />
     </div>
   );
 }
