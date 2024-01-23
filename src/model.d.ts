@@ -31,6 +31,9 @@ export type StickmanMovementDefinitionV1 = {
    */
   movements: [StickmanPoints, ...Partial<StickmanPoints>[]];
   configuration: StickmanConfiguration;
+  animation: {
+    timeBetweenFrames: number;
+  };
 };
 
 export type SVGViewbox = [x: number, y: number, width: number, height: number];

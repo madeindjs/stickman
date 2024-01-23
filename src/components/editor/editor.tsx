@@ -8,11 +8,13 @@ import StickmanSVGAnimated from "../svg/stickman-svg-animated";
 import StickmanSVG from "../svg/stickman-svg.jsx";
 import EditorExport from "./editor-export.jsx";
 import EditorHandle from "./editor-handle.jsx";
+import EditorSettings from "./editor-settings";
 import EditorSnapshots from "./editor-snapshots";
 
 export default function Editor() {
   let svg: SVGSVGElement;
 
+  const [timeBetweenFrames, setTimeBetweenFrames] = createSignal(0.2);
   const [stickman, setStickman] = createSignal(buildStickman());
   const [snapshots, setSnapshots] = createSignal<StickmanPoints[]>([]);
   const [cursorPosition, setCursorPosition] = createSignal<Point>([-1, -1]);
@@ -25,7 +27,8 @@ export default function Editor() {
 
   const pointsNames = () => Object.entries(stickman().points) as [keyof StickmanPoints, Point][];
 
-  const movementDefinition = () => generateStickmanMovementDefinitionV1(conf(), snapshots());
+  const movementDefinition = () =>
+    generateStickmanMovementDefinitionV1(conf(), snapshots(), { timeBetweenFrames: timeBetweenFrames() });
 
   function onDragged(key: keyof StickmanPoints, point: Point) {
     setStickman(buildStickman(conf(), { ...points(), [key]: point }));
@@ -45,7 +48,8 @@ export default function Editor() {
 
   return (
     <div class="border rounded">
-      <div class="grid grid-cols-2 gap-2 content-center">
+      <div class="grid grid-cols-3 gap-2 content-center">
+        <EditorSettings onReset={reset} timeBetweenFrames={[timeBetweenFrames, setTimeBetweenFrames]} />
         <div class="flex flex-col items-center">
           <p class="text-2xl">Editor</p>
           <StickmanSVG ref={svg} stickman={stickman} height={500} width={300} className="bg-white rounded">
@@ -60,19 +64,14 @@ export default function Editor() {
               )}
             </For>
           </StickmanSVG>
+          <button class="btn btn-primary" onClick={addSnapshot}>
+            ➕ Add Snapshot
+          </button>
         </div>
         <div class="flex flex-col items-center">
           <p class="text-2xl">Preview</p>
           <StickmanSVGAnimated definition={movementDefinition} height={500} width={300} className="bg-white rounded" />
         </div>
-      </div>
-      <div class="editor__toolbar">
-        <button class="btn btn-warning btn-outline" onClick={reset}>
-          🗑️ Reset
-        </button>
-        <button class="btn btn-primary" onClick={addSnapshot}>
-          ➕ Add Snapshot
-        </button>
       </div>
       <Show when={snapshots().length > 0}>
         <EditorExport snapshots={snapshots} configuration={() => conf()} />

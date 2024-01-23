@@ -11,7 +11,11 @@ type Props = {
 export default function EditorExport({ snapshots, configuration }: Props) {
   const value = () =>
     snapshots().length > 0
-      ? JSON.stringify(generateStickmanMovementDefinitionV1(configuration(), snapshots()), undefined, 2)
+      ? JSON.stringify(
+          generateStickmanMovementDefinitionV1(configuration(), snapshots(), { timeBetweenFrames: 1 }),
+          undefined,
+          2
+        )
       : "";
 
   const copy = useCopyToClipboard(value);
