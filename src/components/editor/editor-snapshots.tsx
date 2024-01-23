@@ -1,5 +1,5 @@
 import type { Accessor, Signal } from "solid-js";
-import { For, Show, createSignal } from "solid-js";
+import { For, Show } from "solid-js";
 import type { Stickman, StickmanConfiguration, StickmanPoints } from "../../model";
 import { buildStickman } from "../../utils/stickman.utils";
 import StickmanSVG from "../svg/stickman-svg";
@@ -7,11 +7,12 @@ import StickmanSVG from "../svg/stickman-svg";
 type Props = {
   snapshots: Signal<StickmanPoints[]>;
   configuration: Accessor<StickmanConfiguration>;
+  selected: Signal<number | undefined>;
 };
 
-export default function EditorSnapshots({ configuration, snapshots: snapshotSignal }: Props) {
+export default function EditorSnapshots({ configuration, snapshots: snapshotSignal, selected: selectedSignal }: Props) {
   const [snapshots, setSnapshots] = snapshotSignal;
-  const [selected, setSelected] = createSignal<number | undefined>();
+  const [selected, setSelected] = selectedSignal;
 
   return (
     <div class="flex overflow-x-auto bg-base-300">

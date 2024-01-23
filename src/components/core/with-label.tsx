@@ -18,7 +18,7 @@ export default function WithLabel(props: Props) {
   const displayBottom = () => labelBottomLeft() || labelBottomRight();
 
   return (
-    <label class="form-control w-full max-w-xs">
+    <label class="form-control w-full">
       <div class="label">
         <span class="label-text">{label()}</span>
         {labelTopRight() && <span class="label-text-alt">{labelTopRight()}</span>}
