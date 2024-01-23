@@ -23,7 +23,8 @@ export default function StickmanSVGAnimated({ definition, width = 100, height = 
   const stickmans = () => Array.from(generateStickmans(definition()));
   const paths = () => stickmans().map((s) => getStickmanPaths(s.points));
 
-  const dur = () => `${definition().animation.timeBetweenFrames * stickmans().length}s`;
+  const dur = () => (definition().animation.timeBetweenFrames * stickmans().length).toPrecision(2);
+  const loop = () => definition().animation.loop;
 
   function getPathsForItem(item: keyof ReturnType<typeof getStickmanPaths>): Accessor<string[]> {
     return () => paths().map((p) => p[item]());
@@ -33,24 +34,21 @@ export default function StickmanSVGAnimated({ definition, width = 100, height = 
     <StickmanSVGWrapper ref={ref} height={height} width={width} strokeWidth={1} className={className}>
       <StickmanSVGInner
         stickman={() => stickmans()[0]}
-        childrenArmLeft={<AnimatePath paths={getPathsForItem("armLeft")} dur={dur} />}
-        childrenArmRight={<AnimatePath paths={getPathsForItem("armRight")} dur={dur} />}
-        childrenBody={<AnimatePath paths={getPathsForItem("body")} dur={dur} />}
-        childrenLegLeft={<AnimatePath paths={getPathsForItem("legLeft")} dur={dur} />}
-        childrenLegRight={<AnimatePath paths={getPathsForItem("legRight")} dur={dur} />}
+        childrenArmLeft={<AnimatePath paths={getPathsForItem("armLeft")} dur={dur} loop={loop} />}
+        childrenArmRight={<AnimatePath paths={getPathsForItem("armRight")} dur={dur} loop={loop} />}
+        childrenBody={<AnimatePath paths={getPathsForItem("body")} dur={dur} loop={loop} />}
+        childrenLegLeft={<AnimatePath paths={getPathsForItem("legLeft")} dur={dur} loop={loop} />}
+        childrenLegRight={<AnimatePath paths={getPathsForItem("legRight")} dur={dur} loop={loop} />}
       />
     </StickmanSVGWrapper>
   );
 }
 
-function AnimatePath({ paths, dur }: { paths: Accessor<string[]>; dur: Accessor<string> }) {
+type AnimatePathProps = { paths: Accessor<string[]>; dur: Accessor<string>; loop: Accessor<boolean> };
+
+function AnimatePath({ paths, dur, loop }: AnimatePathProps) {
   const from = () => paths()[0];
-  const to = () => paths()[paths().length - 1];
+  const values = () => (loop() ? [...paths(), from()] : paths()).join(";");
 
-  const values = () =>
-    paths()
-      .map((p) => p)
-      .join(";");
-
-  return <animate attributeName="d" from={from()} to={to()} values={values()} dur={dur()} repeatCount="indefinite" />;
+  return <animate attributeName="d" values={values()} dur={dur().toString()} repeatCount="indefinite" />;
 }

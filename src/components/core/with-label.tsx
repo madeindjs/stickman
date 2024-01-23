@@ -2,6 +2,7 @@ import type { Accessor, JSX } from "solid-js";
 import { toAccessor } from "../../utils/solid.utils";
 
 type Props = {
+  for: string;
   label: string | Accessor<string>;
   labelTopRight?: string;
   labelBottomLeft?: string;
@@ -18,7 +19,7 @@ export default function WithLabel(props: Props) {
   const displayBottom = () => labelBottomLeft() || labelBottomRight();
 
   return (
-    <label class="form-control w-full">
+    <label class="form-control w-full" for={props.for}>
       <div class="label">
         <span class="label-text">{label()}</span>
         {labelTopRight() && <span class="label-text-alt">{labelTopRight()}</span>}

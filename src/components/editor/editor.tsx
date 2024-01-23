@@ -17,6 +17,7 @@ export default function Editor() {
   let svgPreview: SVGSVGElement;
 
   const [timeBetweenFrames, setTimeBetweenFrames] = createSignal(0.2);
+  const [loop, setLoop] = createSignal(false);
   const [cursorPosition, setCursorPosition] = createSignal<Point>([-1, -1]);
 
   const {
@@ -38,7 +39,7 @@ export default function Editor() {
   const pointsNames = () => Object.entries(stickman().points) as [keyof StickmanPoints, Point][];
 
   const movementDefinition = () =>
-    generateStickmanMovementDefinitionV1(conf(), snapshots(), { timeBetweenFrames: timeBetweenFrames() });
+    generateStickmanMovementDefinitionV1(conf(), snapshots(), { timeBetweenFrames: timeBetweenFrames(), loop: loop() });
 
   function onDragged(key: keyof StickmanPoints, point: Point) {
     const newPoints: StickmanPoints = { ...points(), [key]: point };
@@ -61,7 +62,12 @@ export default function Editor() {
   return (
     <div class="border rounded">
       <div class="grid grid-cols-3 gap-2 content-center">
-        <EditorSettings onReset={reset} timeBetweenFrames={[timeBetweenFrames, setTimeBetweenFrames]} />
+        <EditorSettings
+          onReset={reset}
+          timeBetweenFrames={[timeBetweenFrames, setTimeBetweenFrames]}
+          loop={[loop, setLoop]}
+          onExport={exportSVG}
+        />
         <div class="flex flex-col items-center gap-2 p-4">
           <p class="text-2xl">Editor</p>
           <StickmanSVG ref={svgEditor} stickman={stickman} height={500} width={300} className="bg-white rounded">

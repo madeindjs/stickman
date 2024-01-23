@@ -33,6 +33,7 @@ export type StickmanMovementDefinitionV1 = {
   configuration: StickmanConfiguration;
   animation: {
     timeBetweenFrames: number;
+    loop: boolean;
   };
 };
 
