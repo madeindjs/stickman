@@ -1,6 +1,5 @@
-import { For, Show, createEffect, createSignal, on, onMount } from "solid-js";
+import { For, Show, createEffect, createSignal, onMount } from "solid-js";
 import useCursorPositionInSVG from "../../hooks/use-cursor-position-in-svg";
-import { usePersistentState } from "../../hooks/use-persistent-state";
 import type { Point, StickmanPoints } from "../../model.js";
 import { generateStickmanMovementDefinitionV1 } from "../../utils/movements.utils";
 import { buildStickman } from "../../utils/stickman.utils.js";
@@ -10,18 +9,25 @@ import EditorExport from "./editor-export.jsx";
 import EditorHandle from "./editor-handle.jsx";
 import EditorSettings from "./editor-settings";
 import EditorSnapshots from "./editor-snapshots";
+import { useSnapshots } from "./hooks/use-snapshots";
+import { useStickman } from "./hooks/use-stickman";
 
 export default function Editor() {
   let svg: SVGSVGElement;
 
   const [timeBetweenFrames, setTimeBetweenFrames] = createSignal(0.2);
-  const [stickman, setStickman] = createSignal(buildStickman());
-  const [snapshots, setSnapshots] = createSignal<StickmanPoints[]>([]);
   const [cursorPosition, setCursorPosition] = createSignal<Point>([-1, -1]);
-  const [snapshotSelectedIndex, setSnapshotSelectedIndex] = createSignal<number | undefined>();
 
-  usePersistentState("editor__stickman", [stickman, setStickman]);
-  usePersistentState("editor__snapshots", [snapshots, setSnapshots]);
+  const {
+    stickman: [stickman, setStickman],
+    updateStickmanPoints,
+  } = useStickman();
+
+  const {
+    snapshots: [snapshots, setSnapshots],
+    selected: [snapshotSelectedIndex, setSnapshotSelectedIndex],
+    updateSelectedSnapshot,
+  } = useSnapshots([stickman, setStickman]);
 
   const conf = () => stickman().configuration;
   const points = () => stickman().points;
@@ -31,25 +37,10 @@ export default function Editor() {
   const movementDefinition = () =>
     generateStickmanMovementDefinitionV1(conf(), snapshots(), { timeBetweenFrames: timeBetweenFrames() });
 
-  // update stickman if selected snapshot change
-  createEffect(
-    on(
-      () => snapshotSelectedIndex(),
-      (value) => {
-        console.log(value);
-        if (value === undefined) return;
-        setStickman(buildStickman(stickman().configuration, snapshots()[value]));
-      }
-    )
-  );
-
   function onDragged(key: keyof StickmanPoints, point: Point) {
     const newPoints: StickmanPoints = { ...points(), [key]: point };
-    if (snapshotSelectedIndex() !== undefined) {
-      const snaps = snapshots();
-      snaps[snapshotSelectedIndex()] = newPoints;
-    }
-    setStickman(buildStickman(conf(), newPoints));
+    updateSelectedSnapshot(newPoints);
+    updateStickmanPoints(newPoints);
   }
 
   const addSnapshot = () => setSnapshots([...snapshots(), stickman().points]);
