@@ -62,7 +62,7 @@ export default function Editor() {
     <div class="border rounded">
       <div class="grid grid-cols-3 gap-2 content-center">
         <EditorSettings onReset={reset} timeBetweenFrames={[timeBetweenFrames, setTimeBetweenFrames]} />
-        <div class="flex flex-col items-center gap-2">
+        <div class="flex flex-col items-center gap-2 p-4">
           <p class="text-2xl">Editor</p>
           <StickmanSVG ref={svgEditor} stickman={stickman} height={500} width={300} className="bg-white rounded">
             <For each={pointsNames()}>
@@ -80,7 +80,7 @@ export default function Editor() {
             ➕ Add Snapshot
           </button>
         </div>
-        <div class="flex flex-col items-center gap-2">
+        <div class="flex flex-col items-center gap-2 p-4">
           <p class="text-2xl">Preview</p>
           <StickmanSVGAnimated
             definition={movementDefinition}

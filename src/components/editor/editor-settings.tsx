@@ -9,7 +9,8 @@ type Props = {
 
 export default function EditorSettings(props: Props) {
   return (
-    <div class="border-r p-4 bg-black flex flex-col gap-2">
+    <div class="border-r p-4 bg-base-100 flex flex-col gap-2">
+      <p class="text-2xl">Settings</p>
       <div class="flex flex-col gap-2 flex-grow">
         <WithLabel label={() => "name"}>
           <input type="text" placeholder="Type here" class="input input-bordered w-full" />

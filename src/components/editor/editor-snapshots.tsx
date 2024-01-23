@@ -15,7 +15,7 @@ export default function EditorSnapshots({ configuration, snapshots: snapshotSign
   const [selected, setSelected] = selectedSignal;
 
   return (
-    <div class="flex overflow-x-auto bg-base-300">
+    <div class="flex overflow-x-auto bg-base-300 border-t">
       <div class="flex gap-1">
         <For each={snapshots().map((points) => buildStickman(configuration(), points))}>
           {(stick, i) => (
