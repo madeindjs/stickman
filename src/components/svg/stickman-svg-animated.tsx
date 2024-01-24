@@ -1,6 +1,6 @@
 import type { StickmanDefinitionV1 } from "../../model";
 
-import type { Accessor } from "solid-js";
+import { Show, type Accessor } from "solid-js";
 import { generateStickmansPoints } from "../../utils/stickman.utils";
 import { getStickmanPaths } from "../../utils/svg.utils";
 import StickmanSVGInner from "./stickman-svg-inner";
@@ -21,6 +21,7 @@ type Props = {
  */
 export default function StickmanSVGAnimated({ definition, width = 100, height = 100, ref, className }: Props) {
   const pointsList = () => Array.from(generateStickmansPoints(definition()));
+  const points = () => pointsList()[0];
   const paths = () => pointsList().map(getStickmanPaths);
 
   const dur = () => (definition().animation.timeBetweenFrames * pointsList().length).toPrecision(2);
@@ -32,15 +33,17 @@ export default function StickmanSVGAnimated({ definition, width = 100, height = 
 
   return (
     <StickmanSVGWrapper ref={ref} height={height} width={width} strokeWidth={1} className={className}>
-      <StickmanSVGInner
-        configuration={() => definition().configuration}
-        points={() => pointsList()[0]}
-        childrenArmLeft={<AnimatePath paths={getPathsForItem("armLeft")} dur={dur} loop={loop} />}
-        childrenArmRight={<AnimatePath paths={getPathsForItem("armRight")} dur={dur} loop={loop} />}
-        childrenBody={<AnimatePath paths={getPathsForItem("body")} dur={dur} loop={loop} />}
-        childrenLegLeft={<AnimatePath paths={getPathsForItem("legLeft")} dur={dur} loop={loop} />}
-        childrenLegRight={<AnimatePath paths={getPathsForItem("legRight")} dur={dur} loop={loop} />}
-      />
+      <Show when={points()}>
+        <StickmanSVGInner
+          configuration={() => definition().configuration}
+          points={points}
+          childrenArmLeft={<AnimatePath paths={getPathsForItem("armLeft")} dur={dur} loop={loop} />}
+          childrenArmRight={<AnimatePath paths={getPathsForItem("armRight")} dur={dur} loop={loop} />}
+          childrenBody={<AnimatePath paths={getPathsForItem("body")} dur={dur} loop={loop} />}
+          childrenLegLeft={<AnimatePath paths={getPathsForItem("legLeft")} dur={dur} loop={loop} />}
+          childrenLegRight={<AnimatePath paths={getPathsForItem("legRight")} dur={dur} loop={loop} />}
+        />
+      </Show>
     </StickmanSVGWrapper>
   );
 }

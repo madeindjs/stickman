@@ -16,11 +16,12 @@ export default function EditorSettings(props: Props) {
 
   return (
     <div class="border-r p-4 bg-base-100 flex flex-col gap-2">
-      <p class="text-2xl">Settings</p>
+      <h2 class="text-2xl">Settings</h2>
       <div class="flex flex-col gap-2 flex-grow">
         <WithLabel label={() => "name"} for={nameId}>
           <input type="text" placeholder="Type here" class="input input-bordered w-full" id={nameId} />
         </WithLabel>
+        <h3 class="text-xl pt-2 ">Animation</h3>
 
         <SliderWithLabel label="Time between frames" value={props.timeBetweenFrames} />
 

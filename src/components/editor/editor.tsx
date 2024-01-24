@@ -1,7 +1,7 @@
 import { For, Show, createEffect, createSignal, onMount } from "solid-js";
 import useCursorPositionInSVG from "../../hooks/use-cursor-position-in-svg";
 import { usePersistentState } from "../../hooks/use-persistent-state";
-import { useSVGExporter } from "../../hooks/use-svg-exporter";
+import { downloadSVG } from "../../hooks/use-svg-exporter";
 import type { Point, StickmanDefinitionV1, StickmanPoints } from "../../model.js";
 import { buildStickmanConfiguration, buildStickmanPoints } from "../../utils/stickman.utils.js";
 import StickmanSVGAnimated from "../svg/stickman-svg-animated";
@@ -30,7 +30,7 @@ export default function Editor() {
     updateSelectedSnapshot,
   } = useSnapshots(setPoints);
 
-  const exportSVG = useSVGExporter(svgPreview);
+  const exportSVG = () => downloadSVG(svgPreview);
 
   const pointsNames = () => Object.entries(points()) as [keyof StickmanPoints, Point][];
 
@@ -72,7 +72,7 @@ export default function Editor() {
           onExport={exportSVG}
         />
         <div class="flex flex-col items-center gap-2 p-4">
-          <p class="text-2xl">Editor</p>
+          <h2 class="text-2xl">Editor</h2>
           <StickmanSVG
             ref={svgEditor}
             configuration={configuration}
@@ -95,25 +95,13 @@ export default function Editor() {
         </div>
         <div class="flex flex-col items-center gap-2 p-4">
           <p class="text-2xl">Preview</p>
-          <Show when={snapshots().length > 0}>
-            <StickmanSVGAnimated
-              definition={movementDefinition}
-              height={500}
-              width={300}
-              className="bg-white rounded"
-              ref={svgPreview}
-            />
-          </Show>
-          <Show when={snapshots().length === 0}>
-            <div class="flex flex-col gap-2 flex-grow items-center justify-center">
-              <p role="alert" class="alert">
-                Add a snapshot to see the preview.
-              </p>
-              <button type="button" class="btn btn-primary" onClick={addSnapshot}>
-                Add snapshot
-              </button>
-            </div>
-          </Show>
+          <StickmanSVGAnimated
+            definition={movementDefinition}
+            height={500}
+            width={300}
+            className="bg-white rounded"
+            ref={svgPreview}
+          />
         </div>
       </div>
       <Show when={snapshots().length > 0}>
