@@ -1,9 +1,10 @@
 import type { Accessor, JSX } from "solid-js";
 import { useSVGStickmanPaths } from "../../hooks/use-svg-stickman-paths";
-import type { Stickman } from "../../model";
+import type { StickmanConfiguration, StickmanPoints } from "../../model";
 
 type Props = {
-  stickman: Accessor<Stickman>;
+  configuration: Accessor<StickmanConfiguration>;
+  points: Accessor<StickmanPoints>;
   childrenBody?: JSX.Element;
   childrenArmLeft?: JSX.Element;
   childrenArmRight?: JSX.Element;
@@ -12,14 +13,16 @@ type Props = {
 };
 
 export default function StickmanSVGInner(props: Props) {
-  const points = () => props.stickman().points;
-  const conf = () => props.stickman().configuration;
-
-  const { armLeft, armRight, body, legLeft, legRight } = useSVGStickmanPaths(props.stickman);
+  const { armLeft, armRight, body, legLeft, legRight } = useSVGStickmanPaths(props.configuration, props.points);
 
   return (
     <>
-      <circle r={conf().headRadius} cx={points().head[0]} cy={points().head[1]} fill="white" />
+      <circle
+        r={props.configuration().headRadius}
+        cx={props.points().head[0]}
+        cy={props.points().head[1]}
+        fill="white"
+      />
       <path d={body()}>{props.childrenBody}</path>
       <path d={armLeft()}>{props.childrenArmLeft}</path>
       <path d={armRight()}>{props.childrenArmRight}</path>

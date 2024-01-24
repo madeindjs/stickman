@@ -3,7 +3,7 @@ import useCursorPositionInSVG from "../../hooks/use-cursor-position-in-svg";
 import { useSVGExporter } from "../../hooks/use-svg-exporter";
 import type { Point, StickmanPoints } from "../../model.js";
 import { generateStickmanMovementDefinitionV1 } from "../../utils/movements.utils";
-import { buildStickman } from "../../utils/stickman.utils.js";
+import { buildStickman, buildStickmanConfiguration, buildStickmanPoints } from "../../utils/stickman.utils.js";
 import StickmanSVGAnimated from "../svg/stickman-svg-animated";
 import StickmanSVG from "../svg/stickman-svg.jsx";
 import EditorHandle from "./editor-handle.jsx";
@@ -20,10 +20,11 @@ export default function Editor() {
   const [loop, setLoop] = createSignal(false);
   const [cursorPosition, setCursorPosition] = createSignal<Point>([-1, -1]);
 
-  const {
-    stickman: [stickman, setStickman],
-    updateStickmanPoints,
-  } = useStickman();
+  const [configuration] = createSignal(buildStickmanConfiguration());
+
+  const [points, setPoints] = createSignal(buildStickmanPoints(configuration()));
+
+  const { updateStickmanPoints } = useStickman();
 
   const {
     snapshots: [snapshots, setSnapshots],
@@ -33,13 +34,13 @@ export default function Editor() {
 
   const exportSVG = useSVGExporter(svgPreview);
 
-  const conf = () => stickman().configuration;
-  const points = () => stickman().points;
-
-  const pointsNames = () => Object.entries(stickman().points) as [keyof StickmanPoints, Point][];
+  const pointsNames = () => Object.entries(points()) as [keyof StickmanPoints, Point][];
 
   const movementDefinition = () =>
-    generateStickmanMovementDefinitionV1(conf(), snapshots(), { timeBetweenFrames: timeBetweenFrames(), loop: loop() });
+    generateStickmanMovementDefinitionV1(configuration(), snapshots(), {
+      timeBetweenFrames: timeBetweenFrames(),
+      loop: loop(),
+    });
 
   function onDragged(key: keyof StickmanPoints, point: Point) {
     const newPoints: StickmanPoints = { ...points(), [key]: point };
@@ -70,7 +71,14 @@ export default function Editor() {
         />
         <div class="flex flex-col items-center gap-2 p-4">
           <p class="text-2xl">Editor</p>
-          <StickmanSVG ref={svgEditor} stickman={stickman} height={500} width={300} className="bg-white rounded">
+          <StickmanSVG
+            ref={svgEditor}
+            configuration={configuration}
+            points={points}
+            height={500}
+            width={300}
+            className="bg-white rounded"
+          >
             <For each={pointsNames()}>
               {([key, [x, y]]) => (
                 <EditorHandle
@@ -96,7 +104,7 @@ export default function Editor() {
       </div>
       <EditorSnapshots
         snapshots={[snapshots, setSnapshots]}
-        configuration={() => conf()}
+        configuration={() => configuration()}
         selected={[snapshotSelectedIndex, setSnapshotSelectedIndex]}
         onAddSnapshot={addSnapshot}
       />

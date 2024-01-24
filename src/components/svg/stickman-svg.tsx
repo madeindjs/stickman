@@ -1,11 +1,12 @@
 import type { Accessor, JSX } from "solid-js";
 import { VIEWBOX_HEIGHT, VIEWBOX_WIDTH } from "../../constants.js";
-import type { Stickman } from "../../model.js";
+import type { StickmanConfiguration, StickmanPoints } from "../../model.js";
 import StickmanSVGInner from "./stickman-svg-inner.jsx";
 import StickmanSVGWrapper from "./stickman-svg-wrapper.jsx";
 
 type Props = {
-  stickman: Accessor<Stickman>;
+  configuration: Accessor<StickmanConfiguration>;
+  points: Accessor<StickmanPoints>;
   children?: JSX.Element;
   height?: number;
   width?: number;
@@ -15,7 +16,8 @@ type Props = {
 };
 
 export default function StickmanSVG({
-  stickman,
+  configuration,
+  points,
   width = VIEWBOX_WIDTH,
   height = VIEWBOX_HEIGHT,
   children,
@@ -28,12 +30,12 @@ export default function StickmanSVG({
       ref={ref}
       height={height}
       width={width}
-      strokeWidth={stickman().configuration.lineWidth}
+      strokeWidth={configuration().lineWidth}
       viewBox={() => [0, 0, VIEWBOX_WIDTH, VIEWBOX_HEIGHT]}
       onClick={onClick}
       className={className}
     >
-      <StickmanSVGInner stickman={stickman} />
+      <StickmanSVGInner configuration={configuration} points={points} />
       {children}
     </StickmanSVGWrapper>
   );

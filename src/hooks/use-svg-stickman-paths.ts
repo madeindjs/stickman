@@ -1,10 +1,8 @@
 import type { Accessor } from "solid-js";
-import type { Stickman } from "../model";
+import type { StickmanConfiguration, StickmanPoints } from "../model";
 import { drawBezierCurve } from "../utils/svg.utils";
 
-export function useSVGStickmanPaths(stickman: Accessor<Stickman>) {
-  const points = () => stickman().points;
-
+export function useSVGStickmanPaths(configuration: Accessor<StickmanConfiguration>, points: Accessor<StickmanPoints>) {
   const body = () => drawBezierCurve(points().chest, points().body, points().pelvis);
   const armLeft = () => drawBezierCurve(points().chest, points().elbowLeft, points().handLeft);
   const armRight = () => drawBezierCurve(points().chest, points().elbowRight, points().handRight);

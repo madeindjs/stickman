@@ -1,7 +1,7 @@
 import type { StickmanMovementDefinitionV1 } from "../../model";
 
 import type { Accessor } from "solid-js";
-import { generateStickmans } from "../../utils/stickman.utils";
+import { generateStickmansPoints } from "../../utils/stickman.utils";
 import { getStickmanPaths } from "../../utils/svg.utils";
 import StickmanSVGInner from "./stickman-svg-inner";
 import StickmanSVGWrapper from "./stickman-svg-wrapper";
@@ -20,10 +20,10 @@ type Props = {
  * The idea is to create all stickmans in the same SVG and then just update the view box to display them.
  */
 export default function StickmanSVGAnimated({ definition, width = 100, height = 100, ref, className }: Props) {
-  const stickmans = () => Array.from(generateStickmans(definition()));
-  const paths = () => stickmans().map((s) => getStickmanPaths(s.points));
+  const pointsList = () => Array.from(generateStickmansPoints(definition()));
+  const paths = () => pointsList().map(getStickmanPaths);
 
-  const dur = () => (definition().animation.timeBetweenFrames * stickmans().length).toPrecision(2);
+  const dur = () => (definition().animation.timeBetweenFrames * pointsList().length).toPrecision(2);
   const loop = () => definition().animation.loop;
 
   function getPathsForItem(item: keyof ReturnType<typeof getStickmanPaths>): Accessor<string[]> {
@@ -33,7 +33,8 @@ export default function StickmanSVGAnimated({ definition, width = 100, height = 
   return (
     <StickmanSVGWrapper ref={ref} height={height} width={width} strokeWidth={1} className={className}>
       <StickmanSVGInner
-        stickman={() => stickmans()[0]}
+        configuration={() => definition().configuration}
+        points={() => pointsList()[0]}
         childrenArmLeft={<AnimatePath paths={getPathsForItem("armLeft")} dur={dur} loop={loop} />}
         childrenArmRight={<AnimatePath paths={getPathsForItem("armRight")} dur={dur} loop={loop} />}
         childrenBody={<AnimatePath paths={getPathsForItem("body")} dur={dur} loop={loop} />}
