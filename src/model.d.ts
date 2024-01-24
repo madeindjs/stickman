@@ -18,6 +18,11 @@ export type StickmanPoints = {
 
 export type StickmanConfiguration = Record<"headRadius" | "lineWidth" | "bodyHeight" | "legHeight", number>;
 
+export type StickmanAnimation = {
+  timeBetweenFrames: number;
+  loop: boolean;
+};
+
 export type StickmanDefinitionV1 = {
   version: 1;
   /**
@@ -25,10 +30,7 @@ export type StickmanDefinitionV1 = {
    */
   movements: StickmanPoints[];
   configuration: StickmanConfiguration;
-  animation: {
-    timeBetweenFrames: number;
-    loop: boolean;
-  };
+  animation: StickmanAnimation;
 };
 
 export type SVGViewbox = [x: number, y: number, width: number, height: number];

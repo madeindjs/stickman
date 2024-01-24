@@ -1,5 +1,6 @@
 import { For, Show, createEffect, createSignal, onMount } from "solid-js";
 import useCursorPositionInSVG from "../../hooks/use-cursor-position-in-svg";
+import { usePersistentState } from "../../hooks/use-persistent-state";
 import { useSVGExporter } from "../../hooks/use-svg-exporter";
 import type { Point, StickmanDefinitionV1, StickmanPoints } from "../../model.js";
 import { buildStickmanConfiguration, buildStickmanPoints } from "../../utils/stickman.utils.js";
@@ -19,6 +20,9 @@ export default function Editor() {
   const [cursorPosition, setCursorPosition] = createSignal<Point>([-1, -1]);
   const [configuration] = createSignal(buildStickmanConfiguration());
   const [points, setPoints] = createSignal(buildStickmanPoints(configuration()));
+
+  usePersistentState("editor__loop", [loop, setLoop]);
+  usePersistentState("editor__timeBetweenFrames", [timeBetweenFrames, setTimeBetweenFrames]);
 
   const {
     snapshots: [snapshots, setSnapshots],
