@@ -1,4 +1,4 @@
-import type { StickmanMovementDefinitionV1 } from "../../model";
+import type { StickmanDefinitionV1 } from "../../model";
 
 import type { Accessor } from "solid-js";
 import { generateStickmansPoints } from "../../utils/stickman.utils";
@@ -7,7 +7,7 @@ import StickmanSVGInner from "./stickman-svg-inner";
 import StickmanSVGWrapper from "./stickman-svg-wrapper";
 
 type Props = {
-  definition: Accessor<StickmanMovementDefinitionV1>;
+  definition: Accessor<StickmanDefinitionV1>;
   height?: number;
   width?: number;
   ref?: SVGSVGElement;

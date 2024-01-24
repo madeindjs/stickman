@@ -1,6 +1,6 @@
-import { StickmanMovementDefinitionV1 } from "../model";
+import { StickmanDefinitionV1 } from "../model";
 
-export const MOVEMENTS_DEF_WALK: StickmanMovementDefinitionV1 = {
+export const MOVEMENTS_DEF_WALK: StickmanDefinitionV1 = {
   version: 1,
   configuration: { bodyHeight: 20, headRadius: 10, legHeight: 20, lineWidth: 2 },
   movements: [

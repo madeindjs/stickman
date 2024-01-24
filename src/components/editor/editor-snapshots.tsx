@@ -1,7 +1,6 @@
 import type { Accessor, Signal } from "solid-js";
 import { For, Show } from "solid-js";
-import type { Stickman, StickmanConfiguration, StickmanPoints } from "../../model";
-import { buildStickman } from "../../utils/stickman.utils";
+import type { StickmanConfiguration, StickmanPoints } from "../../model";
 import StickmanSVG from "../svg/stickman-svg";
 
 type Props = {
@@ -23,12 +22,13 @@ export default function EditorSnapshots({
   return (
     <div class="flex overflow-x-auto bg-base-300 border-t">
       <div class="flex gap-1">
-        <For each={snapshots().map((points) => buildStickman(configuration(), points))}>
-          {(stick, i) => (
+        <For each={snapshots()}>
+          {(points, i) => (
             <Snapshot
               position={() => i() + 1}
               onClick={() => (selected() === i() ? setSelected(undefined) : setSelected(i()))}
-              stickman={stick}
+              configuration={configuration()}
+              points={points}
               selected={() => selected() === i()}
               onRemove={() => {
                 setSnapshots(snapshots().filter((_, index) => i() !== index));
@@ -50,7 +50,8 @@ export default function EditorSnapshots({
 function Snapshot(props: {
   position: Accessor<number>;
   selected: Accessor<boolean>;
-  stickman: Stickman;
+  configuration: StickmanConfiguration;
+  points: StickmanPoints;
   onClick: () => void;
   onRemove: () => void;
 }) {
@@ -70,7 +71,8 @@ function Snapshot(props: {
         {props.position()}
       </span>
       <StickmanSVG
-        stickman={() => props.stickman}
+        points={() => props.points}
+        configuration={() => props.configuration}
         onClick={props.onClick}
         height={200}
         width={100}

@@ -1,16 +1,14 @@
-import { For, createEffect, createSignal, onMount } from "solid-js";
+import { For, Show, createEffect, createSignal, onMount } from "solid-js";
 import useCursorPositionInSVG from "../../hooks/use-cursor-position-in-svg";
 import { useSVGExporter } from "../../hooks/use-svg-exporter";
-import type { Point, StickmanPoints } from "../../model.js";
-import { generateStickmanMovementDefinitionV1 } from "../../utils/movements.utils";
-import { buildStickman, buildStickmanConfiguration, buildStickmanPoints } from "../../utils/stickman.utils.js";
+import type { Point, StickmanDefinitionV1, StickmanPoints } from "../../model.js";
+import { buildStickmanConfiguration, buildStickmanPoints } from "../../utils/stickman.utils.js";
 import StickmanSVGAnimated from "../svg/stickman-svg-animated";
 import StickmanSVG from "../svg/stickman-svg.jsx";
 import EditorHandle from "./editor-handle.jsx";
 import EditorSettings from "./editor-settings";
 import EditorSnapshots from "./editor-snapshots";
 import { useSnapshots } from "./hooks/use-snapshots";
-import { useStickman } from "./hooks/use-stickman";
 
 export default function Editor() {
   let svgEditor: SVGSVGElement;
@@ -19,40 +17,40 @@ export default function Editor() {
   const [timeBetweenFrames, setTimeBetweenFrames] = createSignal(0.2);
   const [loop, setLoop] = createSignal(false);
   const [cursorPosition, setCursorPosition] = createSignal<Point>([-1, -1]);
-
   const [configuration] = createSignal(buildStickmanConfiguration());
-
   const [points, setPoints] = createSignal(buildStickmanPoints(configuration()));
-
-  const { updateStickmanPoints } = useStickman();
 
   const {
     snapshots: [snapshots, setSnapshots],
     selected: [snapshotSelectedIndex, setSnapshotSelectedIndex],
     updateSelectedSnapshot,
-  } = useSnapshots([stickman, setStickman]);
+  } = useSnapshots(setPoints);
 
   const exportSVG = useSVGExporter(svgPreview);
 
   const pointsNames = () => Object.entries(points()) as [keyof StickmanPoints, Point][];
 
-  const movementDefinition = () =>
-    generateStickmanMovementDefinitionV1(configuration(), snapshots(), {
-      timeBetweenFrames: timeBetweenFrames(),
+  const movementDefinition = (): StickmanDefinitionV1 => ({
+    animation: {
       loop: loop(),
-    });
+      timeBetweenFrames: timeBetweenFrames(),
+    },
+    configuration: configuration(),
+    movements: snapshots(),
+    version: 1,
+  });
 
   function onDragged(key: keyof StickmanPoints, point: Point) {
     const newPoints: StickmanPoints = { ...points(), [key]: point };
     updateSelectedSnapshot(newPoints);
-    updateStickmanPoints(newPoints);
+    setPoints(newPoints);
   }
 
-  const addSnapshot = () => setSnapshots([...snapshots(), stickman().points]);
+  const addSnapshot = () => setSnapshots([...snapshots(), points()]);
 
   function reset() {
     setSnapshots([]);
-    setStickman(buildStickman());
+    setPoints(buildStickmanPoints(configuration()));
   }
 
   onMount(() => {
@@ -93,21 +91,35 @@ export default function Editor() {
         </div>
         <div class="flex flex-col items-center gap-2 p-4">
           <p class="text-2xl">Preview</p>
-          <StickmanSVGAnimated
-            definition={movementDefinition}
-            height={500}
-            width={300}
-            className="bg-white rounded"
-            ref={svgPreview}
-          />
+          <Show when={snapshots().length > 0}>
+            <StickmanSVGAnimated
+              definition={movementDefinition}
+              height={500}
+              width={300}
+              className="bg-white rounded"
+              ref={svgPreview}
+            />
+          </Show>
+          <Show when={snapshots().length === 0}>
+            <div class="flex flex-col gap-2 flex-grow items-center justify-center">
+              <p role="alert" class="alert">
+                Add a snapshot to see the preview.
+              </p>
+              <button type="button" class="btn btn-primary" onClick={addSnapshot}>
+                Add snapshot
+              </button>
+            </div>
+          </Show>
         </div>
       </div>
-      <EditorSnapshots
-        snapshots={[snapshots, setSnapshots]}
-        configuration={() => configuration()}
-        selected={[snapshotSelectedIndex, setSnapshotSelectedIndex]}
-        onAddSnapshot={addSnapshot}
-      />
+      <Show when={snapshots().length > 0}>
+        <EditorSnapshots
+          snapshots={[snapshots, setSnapshots]}
+          configuration={() => configuration()}
+          selected={[snapshotSelectedIndex, setSnapshotSelectedIndex]}
+          onAddSnapshot={addSnapshot}
+        />
+      </Show>
     </div>
   );
 }

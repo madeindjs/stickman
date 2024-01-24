@@ -31,7 +31,6 @@ export default function StickmanSVG({
       height={height}
       width={width}
       strokeWidth={configuration().lineWidth}
-      viewBox={() => [0, 0, VIEWBOX_WIDTH, VIEWBOX_HEIGHT]}
       onClick={onClick}
       className={className}
     >

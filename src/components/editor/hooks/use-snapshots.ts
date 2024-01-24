@@ -1,10 +1,8 @@
-import type { Signal } from "solid-js";
+import type { Setter, Signal } from "solid-js";
 import { createEffect, createSignal, on } from "solid-js";
-import { usePersistentState } from "../../../hooks/use-persistent-state";
-import { Stickman, StickmanPoints } from "../../../model";
-import { buildStickman } from "../../../utils/stickman.utils";
+import type { StickmanPoints } from "../../../model";
 
-export function useSnapshots([stickman, setStickman]: Signal<Stickman>): {
+export function useSnapshots(setPoints: Setter<StickmanPoints>): {
   snapshots: Signal<StickmanPoints[]>;
   selected: Signal<number | undefined>;
   updateSelectedSnapshot: (points: StickmanPoints) => void;
@@ -12,13 +10,13 @@ export function useSnapshots([stickman, setStickman]: Signal<Stickman>): {
   const [snapshots, setSnapshots] = createSignal<StickmanPoints[]>([]);
   const [snapshotSelectedIndex, setSnapshotSelectedIndex] = createSignal<number | undefined>();
 
-  usePersistentState("editor__snapshots", [snapshots, setSnapshots]);
+  // usePersistentState("editor__snapshots", [snapshots, setSnapshots]);
 
   // update stickman if selected snapshot change
   createEffect(
     on(
       () => snapshotSelectedIndex(),
-      (value) => value !== undefined && setStickman(buildStickman(stickman().configuration, snapshots()[value]))
+      (value) => value !== undefined && setPoints(snapshots()[value])
     )
   );
 

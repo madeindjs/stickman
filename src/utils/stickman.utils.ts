@@ -1,18 +1,8 @@
-import type { Stickman, StickmanConfiguration, StickmanMovementDefinitionV1, StickmanPoints } from "../model.js";
+import type { StickmanConfiguration, StickmanDefinitionV1, StickmanPoints } from "../model.js";
 import { buildPoint, getCircleBottom, movePoint } from "./geometry.utils.js";
 
 export function buildStickmanConfiguration() {
   return { bodyHeight: 20, headRadius: 10, legHeight: 20, lineWidth: 2 };
-}
-
-export function buildStickman(
-  configuration: StickmanConfiguration = { bodyHeight: 20, headRadius: 10, legHeight: 20, lineWidth: 2 },
-  points?: StickmanPoints
-): Stickman {
-  return {
-    configuration,
-    points: points ?? buildStickmanPoints(configuration),
-  };
 }
 
 export function buildStickmanPoints(conf: StickmanConfiguration): StickmanPoints {
@@ -52,7 +42,7 @@ export function buildStickmanPoints(conf: StickmanConfiguration): StickmanPoints
   };
 }
 
-export function* generateStickmansPoints(definition: StickmanMovementDefinitionV1): Generator<StickmanPoints> {
+export function* generateStickmansPoints(definition: StickmanDefinitionV1): Generator<StickmanPoints> {
   let current = definition.movements[0];
   yield current;
   let i = 1;
