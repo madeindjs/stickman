@@ -1,4 +1,4 @@
-import { For, Show, createEffect, createSignal, onMount } from "solid-js";
+import { For, createEffect, createSignal, onMount } from "solid-js";
 import useCursorPositionInSVG from "../../hooks/use-cursor-position-in-svg";
 import { usePersistentState } from "../../hooks/use-persistent-state";
 import { downloadSVG } from "../../hooks/use-svg-exporter";
@@ -62,6 +62,8 @@ export default function Editor() {
     createEffect(() => setCursorPosition(cursor()));
   });
 
+  console.log(pointsNames());
+
   return (
     <div class="border rounded">
       <div class="grid grid-cols-3 gap-2 content-center">
@@ -104,14 +106,12 @@ export default function Editor() {
           />
         </div>
       </div>
-      <Show when={snapshots().length > 0}>
-        <EditorSnapshots
-          snapshots={[snapshots, setSnapshots]}
-          configuration={() => configuration()}
-          selected={[snapshotSelectedIndex, setSnapshotSelectedIndex]}
-          onAddSnapshot={addSnapshot}
-        />
-      </Show>
+      <EditorSnapshots
+        snapshots={[snapshots, setSnapshots]}
+        configuration={() => configuration()}
+        selected={[snapshotSelectedIndex, setSnapshotSelectedIndex]}
+        onAddSnapshot={addSnapshot}
+      />
     </div>
   );
 }

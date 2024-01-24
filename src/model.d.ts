@@ -2,7 +2,6 @@ export type Point = [x: number, y: number];
 
 export type StickmanPoints = {
   head: Point;
-  neck: Point;
   chest: Point;
   body: Point;
   elbowLeft: Point;

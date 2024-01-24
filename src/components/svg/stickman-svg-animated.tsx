@@ -3,6 +3,8 @@ import type { StickmanDefinitionV1 } from "../../model";
 import { Show, type Accessor } from "solid-js";
 import { generateStickmansPoints } from "../../utils/stickman.utils";
 import { getStickmanPaths } from "../../utils/svg.utils";
+import AnimateCircle from "./animate/circle";
+import AnimatePath from "./animate/path";
 import StickmanSVGInner from "./stickman-svg-inner";
 import StickmanSVGWrapper from "./stickman-svg-wrapper";
 
@@ -32,11 +34,18 @@ export default function StickmanSVGAnimated({ definition, width = 100, height = 
   }
 
   return (
-    <StickmanSVGWrapper ref={ref} height={height} width={width} strokeWidth={1} className={className}>
+    <StickmanSVGWrapper
+      ref={ref}
+      height={height}
+      width={width}
+      strokeWidth={definition().configuration.lineWidth}
+      className={className}
+    >
       <Show when={points()}>
         <StickmanSVGInner
           configuration={() => definition().configuration}
           points={points}
+          childrenHead={<AnimateCircle paths={() => pointsList().map((p) => p.head)} dur={dur} loop={loop} />}
           childrenArmLeft={<AnimatePath paths={getPathsForItem("armLeft")} dur={dur} loop={loop} />}
           childrenArmRight={<AnimatePath paths={getPathsForItem("armRight")} dur={dur} loop={loop} />}
           childrenBody={<AnimatePath paths={getPathsForItem("body")} dur={dur} loop={loop} />}
@@ -46,13 +55,4 @@ export default function StickmanSVGAnimated({ definition, width = 100, height = 
       </Show>
     </StickmanSVGWrapper>
   );
-}
-
-type AnimatePathProps = { paths: Accessor<string[]>; dur: Accessor<string>; loop: Accessor<boolean> };
-
-function AnimatePath({ paths, dur, loop }: AnimatePathProps) {
-  const from = () => paths()[0];
-  const values = () => (loop() ? [...paths(), from()] : paths()).join(";");
-
-  return <animate attributeName="d" values={values()} dur={dur().toString()} repeatCount="indefinite" />;
 }

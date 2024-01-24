@@ -27,7 +27,6 @@ export function buildStickmanPoints(conf: StickmanConfiguration): StickmanPoints
 
   return {
     head,
-    neck,
     chest,
     body,
     pelvis,
